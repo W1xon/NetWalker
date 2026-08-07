@@ -16,12 +16,12 @@ toggleModeBtn.addEventListener("click", (e) => {
         authTitle.textContent = "Вход в систему";
         submitBtn.textContent = "Войти";
         toggleModeBtn.textContent = "Зарегистрироваться";
-        toggleModeText.childNodes[0].textContent = "Ещё нет аккаунта? ";
+        toggleModeText.textContent = "Ещё нет аккаунта? ";
     } else {
         authTitle.textContent = "Регистрация";
         submitBtn.textContent = "Создать аккаунт";
         toggleModeBtn.textContent = "Войти";
-        toggleModeText.childNodes[0].textContent = "Уже есть аккаунт? ";
+        toggleModeText.textContent = "Уже есть аккаунт? ";
     }
 });
 
@@ -50,7 +50,7 @@ authForm.addEventListener("submit", async (e) => {
             return;
         }
 
-        window.location.href = "/";
+        window.location.href = "/dashboard";
 
     } catch (err) {
         console.error("Сетевая ошибка:", err);

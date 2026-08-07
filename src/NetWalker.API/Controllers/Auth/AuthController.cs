@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetWalker.API.DTOs;
 using NetWalker.Application.Common.Interfaces;
@@ -13,6 +14,12 @@ public class AuthController : ControllerBase
     public AuthController(IAuthService authService)
     {
         _authService = authService;
+    }
+    [HttpGet("me")]
+    [Authorize] 
+    public IActionResult GetCurrentUser()
+    {
+        return Ok(new { name = User.Identity?.Name });
     }
     
     [HttpPost("login")]
@@ -51,7 +58,13 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        Response.Cookies.Delete("jwt");
+        Response.Cookies.Delete("jwt", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict
+        });
+    
         return Ok(new { message = "Logged out" });
     }
 

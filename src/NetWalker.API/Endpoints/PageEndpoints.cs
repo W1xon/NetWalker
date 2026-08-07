@@ -8,19 +8,22 @@ public static class PageEndpoints
     {
         var pages = app.MapGroup("");
 
-        pages.MapGet("/auth", () =>
-            Results.File(Path.Combine(app.ServiceProvider.GetRequiredService<IWebHostEnvironment>().WebRootPath, "pages/auth.html"), "text/html"));
-        
-        pages.MapGet("/", (HttpContext context, IWebHostEnvironment env)  =>
+        pages.MapGet("/auth", (IWebHostEnvironment env) =>
+            Results.File(Path.Combine(env.WebRootPath, "pages/auth.html"), "text/html"));
+        pages.MapGet("/", (IWebHostEnvironment env) =>
+            Results.File(Path.Combine(env.WebRootPath, "pages/index.html"), "text/html"));
+        pages.MapGet("/dashboard", (HttpContext context, IWebHostEnvironment env)  =>
         {
             if (context.User.Identity?.IsAuthenticated != true)
             {
                 return Results.Redirect("/auth");
             }
-            return Results.File(Path.Combine(env.WebRootPath, "pages/index.html"), "text/html");
+            return Results.File(Path.Combine(env.WebRootPath, "pages/dashboard.html"), "text/html");
         });
 
-        app.MapFallback(() => Results.Redirect("/"));
+        app.MapFallback((IWebHostEnvironment env) => 
+            Results.File(Path.Combine(env.WebRootPath, "pages/404.html"), "text/html"));
+        
         return app;
     }
 }

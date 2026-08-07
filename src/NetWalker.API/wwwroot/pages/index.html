@@ -2,17 +2,51 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>NetWalker - Главная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWalker — Web Control Plane</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>Добро пожаловать в NetWalker</h1>
+<header class="navbar">
+    <div class="container">
+        <a href="/" class="logo">Net<span>Walker</span></a>
+        <div class="nav-links">
+            <a href="/auth" class="btn btn-secondary">Вход</a>
+            <a href="/dashboard" class="btn btn-primary">Панель управления</a>
+        </div>
+    </div>
+</header>
 
-<div id="user-info">
-    <p>Загрузка данных...</p>
-</div>
+<main>
+    <section class="hero">
+        <div class="container">
+            <h1>Панель управления сессиями CmdWalker</h1>
+            <p>Управляйте игровыми комнатами через браузер, создавайте хосты и присоединяйтесь к сессиям консольного рогалика в реальном времени.</p>
+            <div class="hero-actions">
+                <a href="/dashboard" class="btn btn-primary">Открыть дашборд</a>
+                <a href="#features" class="btn btn-secondary">Как это работает</a>
+            </div>
+        </div>
+    </section>
 
-<button id="logout-btn">Выйти</button>
-
-<script src="/js/index.js"></script>
+    <section id="features" class="features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>🌐 Веб-управление сессиями</h3>
+                    <p>Создавайте комнаты напрямую через веб-интерфейс и забирайте права хоста в игре с помощью Host Ticket.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔑 Быстрый доступ по коду</h3>
+                    <p>Находите открытые комнаты в общем списке или подключайтесь по уникальному 5-значному коду сессии.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Live Мониторинг</h3>
+                    <p>Отслеживайте активные комнаты, статус хостов и общую статистику игроков в реальном времени.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
 </body>
 </html>

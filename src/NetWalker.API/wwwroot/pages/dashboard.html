@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWalker — Хаб сессий</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/dashboard.js" defer></script>
+</head>
+<body>
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <a href="/" class="logo">Net<span>Walker</span></a>
+        <nav class="sidebar-nav">
+            <a href="/dashboard" class="sidebar-link active">🎮 Активные комнаты</a>
+            <a href="/dashboard" class="sidebar-link">➕ Создать сессию</a>
+            <a href="/dashboard" class="sidebar-link">📊 Моя статистика</a>
+        </nav>
+        <button id="logout-btn" class="btn btn-secondary" style="width: 100%;">Выйти</button>
+    </aside>
+
+    <main class="main-content">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <label>Активных сессий</label>
+                <span>12</span>
+            </div>
+            <div class="stat-item">
+                <label>Игроков онлайн</label>
+                <span>34</span>
+            </div>
+            <div class="stat-item">
+                <label>Ожидают хоста</label>
+                <span>2</span>
+            </div>
+        </div>
+
+        <h2>Список комнат</h2>
+        <p style="color: var(--text-secondary); margin-top: 4px;">Подключайтесь к существующей сессии или заберите Host Ticket для своей игры.</p>
+
+        <div class="room-grid">
+            <div class="room-card">
+                <div class="room-card-header">
+                    <h4>Код: <code>X7K9P</code></h4>
+                    <span class="room-badge badge-lobby">Lobby</span>
+                </div>
+                <p>Игроки: 2 / 4<br>Хост: PlayerOne</p>
+                <button class="btn btn-primary" style="width: 100%;">Присоединиться</button>
+            </div>
+
+            <div class="room-card">
+                <div class="room-card-header">
+                    <h4>Код: <code>B3M2W</code></h4>
+                    <span class="room-badge badge-waiting">WaitingForHost</span>
+                </div>
+                <p>Создана через Web<br>Требуется ввод Host Ticket</p>
+                <button class="btn btn-secondary" style="width: 100%;">Получить билет</button>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -2,32 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>NetWalker - Авторизация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWalker — Авторизация</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/auth.js" defer></script>
 </head>
 <body>
-<h1 id="auth-title">Вход в систему</h1>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1 id="auth-title">Вход в систему</h1>
 
-<form id="auth-form">
-    <div>
-        <label for="name">Имя пользователя:</label>
-        <input type="text" id="name" name="name" required autocomplete="username">
+        <form id="auth-form">
+            <div class="form-group">
+                <label for="username">Имя пользователя</label>
+                <input type="text" id="username" name="Name" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="Password" required autocomplete="current-password">
+            </div>
+
+            <div id="error-message" class="error-message"></div>
+
+            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%;">Войти</button>
+        </form>
+
+        <div class="auth-toggle">
+            <span id="toggle-mode-text">Ещё нет аккаунта? </span>
+            <button type="button" id="toggle-mode-btn">Зарегистрироваться</button>
+        </div>
     </div>
-
-    <div>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required autocomplete="current-password">
-    </div>
-
-    <button type="submit" id="submit-btn">Войти</button>
-</form>
-
-<div id="error-message" style="color: red;"></div>
-
-<hr>
-<p id="toggle-mode-text">
-    Ещё нет аккаунта? <a href="#" id="toggle-mode-btn">Зарегистрироваться</a>
-</p>
-
-<script src="/js/auth.js"></script>
+</div>
 </body>
 </html>
