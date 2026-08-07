@@ -9,7 +9,7 @@ public class User
 
     public User(string nick, string passwordHash)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         Nick = nick;
         PasswordHash = passwordHash;
         CreatedTime = DateTime.UtcNow;

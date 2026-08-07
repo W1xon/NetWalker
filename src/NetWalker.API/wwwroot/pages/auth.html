@@ -5,9 +5,9 @@
     <title>NetWalker - Авторизация</title>
 </head>
 <body>
-<h1>Вход в систему</h1>
+<h1 id="auth-title">Вход в систему</h1>
 
-<form id="login-form">
+<form id="auth-form">
     <div>
         <label for="name">Имя пользователя:</label>
         <input type="text" id="name" name="name" required autocomplete="username">
@@ -21,8 +21,13 @@
     <button type="submit" id="submit-btn">Войти</button>
 </form>
 
-<div id="error-message"></div>
+<div id="error-message" style="color: red;"></div>
 
-<script src="/js/login.js"></script>
+<hr>
+<p id="toggle-mode-text">
+    Ещё нет аккаунта? <a href="#" id="toggle-mode-btn">Зарегистрироваться</a>
+</p>
+
+<script src="/js/auth.js"></script>
 </body>
 </html>

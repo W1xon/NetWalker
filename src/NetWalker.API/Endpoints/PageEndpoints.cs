@@ -8,17 +8,19 @@ public static class PageEndpoints
     {
         var pages = app.MapGroup("");
 
-        pages.MapGet("/auth/login", () =>
-            Results.File(Path.Combine(app.ServiceProvider.GetRequiredService<IWebHostEnvironment>().WebRootPath, "pages/login.html"), "text/html"));
-
-        pages.MapGet("/", [Authorize] () => 
-            Results.File(Path.Combine(app.ServiceProvider.GetRequiredService<IWebHostEnvironment>().WebRootPath, "pages/index.html"), "text/html"));
-
-        app.MapFallback(context =>
+        pages.MapGet("/auth", () =>
+            Results.File(Path.Combine(app.ServiceProvider.GetRequiredService<IWebHostEnvironment>().WebRootPath, "pages/auth.html"), "text/html"));
+        
+        pages.MapGet("/", (HttpContext context, IWebHostEnvironment env)  =>
         {
-            context.Response.Redirect("/");
-            return Task.CompletedTask;
+            if (context.User.Identity?.IsAuthenticated != true)
+            {
+                return Results.Redirect("/auth");
+            }
+            return Results.File(Path.Combine(env.WebRootPath, "pages/index.html"), "text/html");
         });
+
+        app.MapFallback(() => Results.Redirect("/"));
         return app;
     }
 }

@@ -1,10 +1,16 @@
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetWalker.API.Endpoints;
+using NetWalker.Application.Common.Interfaces;
+using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Interfaces.Security;
+using NetWalker.Application.Services.Auth;
 using NetWalker.Infrastructure.Auth;
+using NetWalker.Infrastructure.Persistence;
+using NetWalker.Infrastructure.Security;
 
 Env.TraversePath().Load();
 
@@ -42,8 +48,17 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
             }
         };
     });
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options => 
+    options.UseNpgsql(connectionString));
+
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 builder.Services.AddControllers();
 

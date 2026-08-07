@@ -24,7 +24,7 @@ public class AuthController : ControllerBase
             return Problem(
                 detail: result.Error,
                 statusCode: StatusCodes.Status401Unauthorized,
-                title: "Login failed"
+                title: result.Error
             );
         }
         AddSecureCookie(result.Value.Token);
@@ -46,6 +46,13 @@ public class AuthController : ControllerBase
         }
         AddSecureCookie(result.Value.Token);
         return Ok(result.Value);
+    }
+    
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("jwt");
+        return Ok(new { message = "Logged out" });
     }
 
     private void AddSecureCookie(string token) =>
