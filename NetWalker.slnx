@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NetWalker.API/NetWalker.API.csproj" />
+    <Project Path="src/NetWalker.Application/NetWalker.Application.csproj" />
+    <Project Path="src/NetWalker.Domain/NetWalker.Domain.csproj" />
+    <Project Path="src/NetWalker.Infrastructure/NetWalker.Infrastructure.csproj" />
+  </Folder>
+</Solution>
