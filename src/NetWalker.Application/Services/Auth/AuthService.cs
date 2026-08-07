@@ -38,7 +38,6 @@ public class AuthService : IAuthService
 
         return Result<AuthResult>.Success( new AuthResult(token));
     }
-
     public async Task<Result<AuthResult>> RegisterAsync(string name, string password, CancellationToken cancellationToken = default)
     {
         var existingUser = await _userRepository.GetByNickAsync(name, cancellationToken);

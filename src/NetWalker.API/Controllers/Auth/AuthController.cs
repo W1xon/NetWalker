@@ -27,6 +27,7 @@ public class AuthController : ControllerBase
                 title: "Login failed"
             );
         }
+        AddSecureCookie(result.Value.Token);
         return Ok(result.Value);
     }
 
@@ -43,6 +44,16 @@ public class AuthController : ControllerBase
                 title: "Registration failed"
             );
         }
+        AddSecureCookie(result.Value.Token);
         return Ok(result.Value);
     }
+
+    private void AddSecureCookie(string token) =>
+        HttpContext.Response.Cookies.Append("jwt", token, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddHours(1)
+        });
 }
