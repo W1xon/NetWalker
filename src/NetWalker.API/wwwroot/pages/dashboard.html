@@ -5,18 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetWalker — Хаб сессий</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/dashboard.js" defer></script>
+    <script src="/js/auth.js" defer></script>
 </head>
 <body>
 <div class="dashboard-layout">
     <aside class="sidebar">
-        <a href="/" class="logo">Net<span>Walker</span></a>
-        <nav class="sidebar-nav">
-            <a href="/dashboard" class="sidebar-link active">🎮 Активные комнаты</a>
-            <a href="/dashboard" class="sidebar-link">➕ Создать сессию</a>
-            <a href="/dashboard" class="sidebar-link">📊 Моя статистика</a>
-        </nav>
-        <button id="logout-btn" class="btn btn-secondary" style="width: 100%;">Выйти</button>
+        <div class="sidebar-top">
+            <a href="/" class="logo">Net<span>Walker</span></a>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="sidebar-link active">Активные комнаты</a>
+                <a href="/dashboard" class="sidebar-link">Создать сессию</a>
+                <a href="/profile" class="sidebar-link">Мой профиль</a>
+            </nav>
+        </div>
+
+        <div class="sidebar-userbar">
+            <div class="userbar-info">
+                <span class="userbar-nick" id="sidebar-user-nick">PlayerName</span>
+                <span class="userbar-status">Online</span>
+            </div>
+            <a href="/profile" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Профиль</a>
+        </div>
     </aside>
 
     <main class="main-content">

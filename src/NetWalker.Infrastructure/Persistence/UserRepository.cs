@@ -14,19 +14,56 @@ public class UserRepository : IUserRepository
     {
         _context = context;
     }
-    public async Task<User?> GetByNickAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<User?> GetByIdAsync(string name, CancellationToken token = default)
     {
         return await _context.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Nick == name, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Nick == name, token);
     }
 
-    public async Task<Result> AddAsync(User user, CancellationToken cancellationToken = default)
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken token = default)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id, token);
+    }
+
+    public async Task<User?> GetByNickWithStatsAsync(string name, CancellationToken token = default)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Stats)
+            .FirstOrDefaultAsync(u => u.Nick == name, token);
+    }
+
+    public async Task<User?> GetByIdWithStatsAsync(Guid id, CancellationToken token = default)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Stats)
+            .FirstOrDefaultAsync(u => u.Id == id, token);
+    }
+
+    public async Task<Result> UpdateAsync(User user, CancellationToken token = default)
     {
         try
         {
-            await _context.Users.AddAsync(user, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync(token);
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure($"Ошибка обновления пользователя: {ex.Message}");
+        }
+    }
+
+    public async Task<Result> AddAsync(User user, CancellationToken token = default)
+    {
+        try
+        { 
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync(token);
             return Result.Success();
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException

@@ -7,6 +7,7 @@ using NetWalker.API.Endpoints;
 using NetWalker.Application.Common.Interfaces;
 using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Interfaces.Security;
+using NetWalker.Application.Services;
 using NetWalker.Application.Services.Auth;
 using NetWalker.Infrastructure.Auth;
 using NetWalker.Infrastructure.Persistence;
@@ -45,6 +46,17 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
                 }
 
                 return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                var path = context.Request.Path.Value ?? string.Empty;
+                if (!path.StartsWith("/api", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.HandleResponse();
+                    context.Response.Redirect("/auth");
+                }
+
+                return Task.CompletedTask;
             }
         };
     });
@@ -59,6 +71,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
 

@@ -11,6 +11,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
         
         builder.HasKey(u => u.Id);
+        builder.HasOne(u => u.Stats)
+            .WithOne()
+            .HasForeignKey<PlayerStats>(s => s.UserId);
 
         builder.Property(u => u.Nick)
             .IsRequired()

@@ -20,38 +20,38 @@ public class AuthService : IAuthService
         _jwtProvider = jwtProvider;
     }
 
-    public async Task<Result<AuthResult>> LoginAsync(string name, string password, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthResponse>> LoginAsync(string name, string password, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByNickAsync(name, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(name, cancellationToken);
         if (user is null)
         {
-            return Result<AuthResult>.Failure("Неверный логин или пароль");
+            return Result<AuthResponse>.Failure("Неверный логин или пароль");
         }
 
         var isPasswordValid = _passwordHasher.Verify(password, user.PasswordHash);
         if (!isPasswordValid)
         {
-            return Result<AuthResult>.Failure("Неверный логин или пароль");
+            return Result<AuthResponse>.Failure("Неверный логин или пароль");
         }
 
         var token = _jwtProvider.GenerateToken(user);
 
-        return Result<AuthResult>.Success( new AuthResult(token));
+        return Result<AuthResponse>.Success( new AuthResponse(token));
     }
-    public async Task<Result<AuthResult>> RegisterAsync(string name, string password, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthResponse>> RegisterAsync(string name, string password, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _userRepository.GetByNickAsync(name, cancellationToken);
+        var existingUser = await _userRepository.GetByIdAsync(name, cancellationToken);
         if (existingUser is not null)
-            return Result<AuthResult>.Failure("Пользователь с таким ником уже существует");
+            return Result<AuthResponse>.Failure("Пользователь с таким ником уже существует");
 
         var passwordHash = _passwordHasher.Create(password);
         var user = new User(name, passwordHash);
 
         var addResult = await _userRepository.AddAsync(user, cancellationToken);
         if(!addResult.IsSuccess)
-            return Result<AuthResult>.Failure("Пользователь с таким ником уже существует");
+            return Result<AuthResponse>.Failure("Пользователь с таким ником уже существует");
 
         var token = _jwtProvider.GenerateToken(user);
-        return Result<AuthResult>.Success(new AuthResult(token));
+        return Result<AuthResponse>.Success(new AuthResponse(token));
     }
 }

@@ -1,5 +1,5 @@
 :root {
-    /* Базовая глубокая тёмная палитра (без синевы) */
+    /* Базовая глубокая тёмная палитра */
     --bg-dark: #09090b;
     --bg-card: #121215;
     --bg-input: #18181b;
@@ -284,37 +284,110 @@ a:hover {
 /* Dashboard Layout */
 .dashboard-layout {
     display: flex;
-    flex: 1;
+    min-height: 100vh;
 }
 
+/* Sidebar */
 .sidebar {
-    width: 240px;
+    width: 260px;
+    min-width: 260px;
+    background-color: var(--bg-card);
     border-right: 1px solid var(--border-color);
-    background-color: var(--bg-dark);
     padding: 20px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-top: 20px;
-    flex: 1;
 }
 
 .sidebar-link {
-    padding: 8px 12px;
+    padding: 10px 12px;
     border-radius: var(--radius-sm);
     color: var(--text-secondary);
     font-size: 0.9rem;
+    font-weight: 500;
     display: block;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .sidebar-link.active,
 .sidebar-link:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* Userbar (Нижняя плашка юзера) */
+.sidebar-userbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    gap: 10px;
+}
+
+.userbar-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.userbar-nick {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.userbar-status {
+    font-size: 0.75rem;
+    color: #22c55e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.userbar-status::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #22c55e;
+}
+
+.userbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+}
+
+.userbar-btn:hover {
     background-color: var(--bg-hover);
     color: var(--text-primary);
 }

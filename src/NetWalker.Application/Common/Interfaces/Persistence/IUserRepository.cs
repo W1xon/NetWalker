@@ -5,7 +5,13 @@ namespace NetWalker.Application.Common.Interfaces.Persistence;
 
 public interface IUserRepository
 {
-    Task<User?> GetByNickAsync(string name, CancellationToken cancellationToken = default);
+    Task<User?> GetByIdAsync(string name, CancellationToken token = default);
+    Task<User?> GetByIdAsync(Guid id, CancellationToken token = default);
     
-    Task<Result> AddAsync(User user, CancellationToken cancellationToken = default);
+    Task<User?> GetByNickWithStatsAsync(string name, CancellationToken token = default);
+    Task<User?> GetByIdWithStatsAsync(Guid id, CancellationToken token = default);
+    
+    Task<Result> UpdateAsync(User user, CancellationToken token = default);
+    
+    Task<Result> AddAsync(User user, CancellationToken token = default);
 }

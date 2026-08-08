@@ -17,7 +17,7 @@ public class JwtProvider : IJwtProvider
     }
     public string GenerateToken(User user)
     {
-        List<Claim> claims = [new Claim(JwtRegisteredClaimNames.Name, user.Nick)];
+        List<Claim> claims = [new Claim( ClaimTypes.Name, user.Nick), new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())];
         
         SigningCredentials signingCredentials = new SigningCredentials(_options.GetSymmetricSecurityKey(), _options.Algorithm);
         
