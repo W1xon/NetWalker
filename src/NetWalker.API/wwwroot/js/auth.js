@@ -1,11 +1,26 @@
-(async function checkAuth() {
+(async function initApp() {
     if (window.location.pathname.startsWith("/auth")) return;
 
     try {
-        const response = await fetch("/api/auth/me");
+        const response = await fetch("/api/User/profile", { method: "GET" });
         if (!response.ok) {
             window.location.replace("/auth");
+            return;
         }
+
+        const profile = await response.json();
+
+        if (profile.nick) {
+            document.querySelectorAll("#sidebar-user-nick, #user-nick, .user-nick").forEach(el => {
+                el.textContent = profile.nick;
+                el.classList.remove("skeleton");
+            });
+        }
+
+        if (typeof window.handleProfileData === "function") {
+            window.handleProfileData(profile);
+        }
+
     } catch (err) {
         window.location.replace("/auth");
     }

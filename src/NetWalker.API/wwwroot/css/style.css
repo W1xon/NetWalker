@@ -513,3 +513,34 @@ a:hover {
     color: var(--text-secondary);
     margin-bottom: 24px;
 }
+/* Skeleton Loaders & Animations */
+@keyframes skeleton-pulse {
+    0% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.6;
+    }
+}
+
+.skeleton {
+    background: var(--bg-input, #2a2a2a);
+    color: transparent !important;
+    border-radius: 4px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Имитация текста внутри скелетона, чтобы сохранять высоту строки */
+.skeleton::after {
+    content: "\00a0";
+}
+
+code.skeleton {
+    display: inline-block;
+    width: 280px;
+}

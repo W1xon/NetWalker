@@ -22,7 +22,7 @@
 
         <div class="sidebar-userbar">
             <div class="userbar-info">
-                <span class="userbar-nick" id="sidebar-user-nick">PlayerName</span>
+                <span class="userbar-nick skeleton user-nick" id="sidebar-user-nick">PlayerName</span>
                 <span class="userbar-status">Online</span>
             </div>
             <button id="logout-btn" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Выйти</button>
@@ -30,11 +30,10 @@
     </aside>
 
     <main class="main-content">
-        <!-- Блок основной информации пользователя -->
         <section class="profile-header-card" style="background: var(--bg-card); padding: 24px; border-radius: var(--radius-md); margin-bottom: 24px; border: 1px solid var(--border-color);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
                 <div>
-                    <h1 id="user-nick" style="margin: 0 0 8px 0; font-size: 28px;">PlayerName</h1>
+                    <h1 class="user-nick skeleton" id="user-nick" style="margin: 0 0 8px 0; font-size: 28px;">PlayerName</h1>
                     <p style="color: var(--text-secondary); margin: 0; font-size: 14px;">
                         ID: <code id="user-id" style="background: var(--bg-input); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color);">00000000-0000-0000-0000-000000000000</code>
                     </p>
@@ -46,7 +45,6 @@
             </div>
         </section>
 
-        <!-- Статистика игрока (PlayerStats) -->
         <h2 style="margin-bottom: 16px;">Статистика CmdWalker</h2>
         <div class="stats-bar" style="margin-bottom: 32px;">
             <div class="stat-item">
@@ -63,7 +61,6 @@
             </div>
         </div>
 
-        <!-- Настройки безопасности -->
         <h2 style="margin-bottom: 16px;">Безопасность</h2>
         <section class="profile-section" style="background: var(--bg-card); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-color); max-width: 500px;">
             <form id="change-password-form">
