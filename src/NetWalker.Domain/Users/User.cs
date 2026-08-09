@@ -19,7 +19,13 @@ public class User
 
         Stats = new PlayerStats(Id);
     }
-    
+
+    public bool TryChangePassword(string newHash)
+    {
+        if (newHash == PasswordHash) return false;
+        PasswordHash = newHash;
+        return true;
+    }
     public void EnsureStatsInitialized()
     {
         Stats ??= new PlayerStats(Id);

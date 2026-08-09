@@ -5,6 +5,7 @@ namespace NetWalker.Application.Common.Interfaces;
 
 public interface IAuthService
 {
-    Task<Result<AuthResponse>> LoginAsync(string name, string password, CancellationToken cancellationToken = default);
-    Task<Result<AuthResponse>> RegisterAsync(string name, string password, CancellationToken cancellationToken = default);
+    Task<Result<AuthResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default);
+    Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);
+    Task<Result<AuthResponse>> ChangePassword(ChangePasswordRequest request, Guid id, CancellationToken cancellationToken = default);
 }

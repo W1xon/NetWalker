@@ -1,4 +1,5 @@
 using DotNetEnv;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,7 @@ using NetWalker.API.Endpoints;
 using NetWalker.Application.Common.Interfaces;
 using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Interfaces.Security;
+using NetWalker.Application.Common.Validators;
 using NetWalker.Application.Services;
 using NetWalker.Application.Services.Auth;
 using NetWalker.Infrastructure.Auth;
@@ -72,6 +74,8 @@ builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordRequestValidator>();
 
 builder.Services.AddControllers();
 

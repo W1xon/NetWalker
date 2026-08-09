@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NetWalker.API.DTOs;
 using NetWalker.Application.Common.Interfaces;
 
 namespace NetWalker.API.Controllers.Profile;
@@ -15,7 +14,7 @@ public class UserController : ControllerBase
     public UserController(IUserService userService)
     {
         _userService = userService;
-    }
+    }    
 
     [HttpGet("profile")]
     [Authorize]
