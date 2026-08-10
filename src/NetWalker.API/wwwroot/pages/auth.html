@@ -11,25 +11,36 @@
 <div class="auth-wrapper">
     <div class="auth-card">
         <h1 id="auth-title">Вход в систему</h1>
+        <p class="auth-subtitle" id="auth-subtitle">Введите данные для доступа к панели управления</p>
 
-        <form id="auth-form">
+        <form id="auth-form" novalidate>
             <div class="form-group">
                 <label for="username">Имя пользователя</label>
-                <input type="text" id="username" name="Name" required autocomplete="username">
+                <input type="text" id="username" name="Name" required autocomplete="username" placeholder="Ваш никнейм">
+                <p class="hint-text" id="username-hint">От 3 до 32 символов, только латиница, цифры, _ и -</p>
             </div>
 
             <div class="form-group">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="Password" required autocomplete="current-password">
+                <input type="password" id="password" name="Password" required autocomplete="current-password" placeholder="••••••••">
+                <div class="password-requirements" id="password-requirements" style="display: none;">
+                    <ul>
+                        <li id="req-length">Минимум 8 символов</li>
+                        <li id="req-upper">Хотя бы одна заглавная буква</li>
+                        <li id="req-digit">Хотя бы одна цифра</li>
+                    </ul>
+                </div>
             </div>
 
-            <div id="error-message" class="error-message"></div>
+            <div id="error-message" class="error-message" style="display: none;"></div>
 
-            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%;">Войти</button>
+            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%;">
+                <span id="btn-text">Войти</span>
+            </button>
         </form>
 
         <div class="auth-toggle">
-            <span id="toggle-mode-text">Ещё нет аккаунта? </span>
+            <span id="toggle-mode-text">Ещё нет аккаунта?</span>
             <button type="button" id="toggle-mode-btn">Зарегистрироваться</button>
         </div>
     </div>

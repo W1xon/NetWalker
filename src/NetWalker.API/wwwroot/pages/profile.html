@@ -14,9 +14,18 @@
         <div class="sidebar-top">
             <a href="/" class="logo">Net<span>Walker</span></a>
             <nav class="sidebar-nav">
-                <a href="/dashboard" class="sidebar-link">🎮 Активные комнаты</a>
-                <a href="/dashboard" class="sidebar-link">➕ Создать сессию</a>
-                <a href="/profile" class="sidebar-link active">📊 Мой профиль</a>
+                <a href="/dashboard" class="sidebar-link">
+                    <span class="nav-icon">🎮</span>
+                    Активные комнаты
+                </a>
+                <a href="/dashboard" class="sidebar-link">
+                    <span class="nav-icon">➕</span>
+                    Создать сессию
+                </a>
+                <a href="/profile" class="sidebar-link active">
+                    <span class="nav-icon">📊</span>
+                    Мой профиль
+                </a>
             </nav>
         </div>
 
@@ -25,28 +34,21 @@
                 <span class="userbar-nick skeleton user-nick" id="sidebar-user-nick">PlayerName</span>
                 <span class="userbar-status">Online</span>
             </div>
-            <button id="logout-btn" class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;">Выйти</button>
+            <button id="logout-btn" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;">Выйти</button>
         </div>
     </aside>
 
     <main class="main-content">
-        <section class="profile-header-card" style="background: var(--bg-card); padding: 24px; border-radius: var(--radius-md); margin-bottom: 24px; border: 1px solid var(--border-color);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-                <div>
-                    <h1 class="user-nick" id="user-nick" style="margin: 0 0 8px 0; font-size: 28px;">PlayerName</h1>
-                    <p style="color: var(--text-secondary); margin: 0; font-size: 14px;">
-                        ID: <code id="user-id" style="background: var(--bg-input); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border-color);">00000000-0000-0000-0000-000000000000</code>
-                    </p>
-                </div>
-                <div style="text-align: right;">
-                    <span style="color: var(--text-secondary); font-size: 13px;">Дата регистрации</span>
-                    <div id="user-created-time" style="font-weight: bold; margin-top: 4px;">01.01.1970 00:00</div>
-                </div>
-            </div>
-        </section>
+        <div class="page-header">
+            <h1 class="user-nick" id="user-nick" style="margin: 0;">PlayerName</h1>
+            <p style="color: var(--text-secondary); margin-top: 4px;">
+                ID: <code id="user-id" style="font-size: 0.85rem;">00000000-0000-0000-0000-000000000000</code>
+                · Зарегистрирован: <span id="user-created-time">01.01.1970 00:00</span>
+            </p>
+        </div>
 
-        <h2 style="margin-bottom: 16px;">Статистика CmdWalker</h2>
-        <div class="stats-bar" style="margin-bottom: 32px;">
+        <h2 class="section-title">📈 Статистика CmdWalker</h2>
+        <div class="stats-bar" style="margin-bottom: 36px;">
             <div class="stat-item">
                 <label>Сыграно игр</label>
                 <span id="stat-total-games">0</span>
@@ -61,25 +63,40 @@
             </div>
         </div>
 
-        <h2 style="margin-bottom: 16px;">Безопасность</h2>
-        <section class="profile-section" style="background: var(--bg-card); padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-color); max-width: 500px;">
-            <form id="change-password-form">
-                <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 18px;">Смена пароля</h3>
+        <h2 class="section-title">🔒 Безопасность</h2>
+        <section class="profile-section">
+            <form id="change-password-form" novalidate>
+                <h3>Смена пароля</h3>
 
-                <div class="form-group" style="margin-bottom: 16px;">
+                <div class="form-group">
                     <label for="current-password">Текущий пароль</label>
-                    <input type="password" id="current-password" name="CurrentPassword" required style="width: 100%;">
+                    <input type="password" id="current-password" name="CurrentPassword" required placeholder="Введите текущий пароль">
                 </div>
 
-                <div class="form-group" style="margin-bottom: 16px;">
+                <div class="form-group">
                     <label for="new-password">Новый пароль</label>
-                    <input type="password" id="new-password" name="NewPassword" required style="width: 100%;">
+                    <input type="password" id="new-password" name="NewPassword" required placeholder="Минимум 8 символов">
+                    <div class="password-requirements" id="password-requirements" style="display: none;">
+                        <ul>
+                            <li id="req-length">Минимум 8 символов</li>
+                            <li id="req-upper">Хотя бы одна заглавная буква</li>
+                            <li id="req-digit">Хотя бы одна цифра</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div id="profile-error-message" class="error-message" style="margin-bottom: 12px;"></div>
-                <div id="profile-info-message" class="info-message" style="margin-bottom: 12px;"></div>
+                <div class="form-group">
+                    <label for="confirm-password">Подтвердите пароль</label>
+                    <input type="password" id="confirm-password" required placeholder="Повторите новый пароль">
+                    <p class="hint-text" id="confirm-hint"></p>
+                </div>
 
-                <button type="submit" class="btn btn-primary">Обновить пароль</button>
+                <div id="profile-error-message" class="error-message" style="display: none;"></div>
+                <div id="profile-info-message" class="info-message" style="display: none;"></div>
+
+                <button type="submit" class="btn btn-primary" id="change-pwd-btn">
+                    <span id="pwd-btn-text">Обновить пароль</span>
+                </button>
             </form>
         </section>
     </main>
