@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetWalker.API.Endpoints;
+using NetWalker.API.Filters;
 using NetWalker.Application.Common.Interfaces;
 using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Interfaces.Security;
@@ -75,9 +76,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordRequestValidator>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
