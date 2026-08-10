@@ -14,7 +14,7 @@ public class UserRepository : IUserRepository
     {
         _context = context;
     }
-    public async Task<User?> GetByIdAsync(string name, CancellationToken token = default)
+    public async Task<User?> GetByNickAsync(string name, CancellationToken token = default)
     {
         return await _context.Users
             .AsNoTracking()
@@ -44,38 +44,20 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Id == id, token);
     }
 
-    public async Task<Result> UpdateAsync(User user, CancellationToken token = default)
+    public async Task UpdateAsync(User user, CancellationToken token)
     {
-        try
-        {
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync(token);
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure($"Ошибка обновления пользователя: {ex.Message}");
-        }
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync(token);
     }
 
-    public async Task<Result> AddAsync(User user, CancellationToken token = default)
+    public void Remove(User user)
     {
-        try
-        { 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync(token);
-            return Result.Success();
-        }
-        catch (DbUpdateException ex) when (ex.InnerException is PostgresException
-                                           {
-                                               SqlState: PostgresErrorCodes.UniqueViolation
-                                           })
-        {
-            return Result.Failure("Пользователь с таким ником уже существует");
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure($"Ошибка сохранения пользователя: {ex.Message}");
-        }
+        throw new NotImplementedException();
+    }
+
+    public async Task AddAsync(User user, CancellationToken token = default)
+    {
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(token);
     }
 }

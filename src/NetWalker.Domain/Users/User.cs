@@ -26,8 +26,4 @@ public class User
         PasswordHash = newHash;
         return true;
     }
-    public void EnsureStatsInitialized()
-    {
-        Stats ??= new PlayerStats(Id);
-    }
 }

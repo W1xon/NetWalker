@@ -19,12 +19,6 @@ public class UserService : IUserService
         var user = await _userRepository.GetByIdWithStatsAsync(id, token);
         if (user is null)
             return Result<ProfileResponse>.Failure("Нет такого профиля");
-
-        if (user.Stats is null)
-        { 
-            user.EnsureStatsInitialized(); 
-            await _userRepository.UpdateAsync(user, token);
-        }
         var playerStats = new PlayerStatsResponse(user.Stats.TotalGames, user.Stats.TotalPlayTime, user.Stats.LongestSession);
         var profile = new ProfileResponse(user.Id, user.Nick, user.CreatedTime, playerStats);
         
@@ -33,15 +27,9 @@ public class UserService : IUserService
     
     public async Task<Result<PlayerStatsResponse>> GetPlayerStatsByNameAsync(Guid id, CancellationToken token = default)
     {
-        
         var user = await _userRepository.GetByIdWithStatsAsync(id, token);
         if (user is null)
             return Result<PlayerStatsResponse>.Failure("Нет такого профиля");
-        if (user.Stats is null)
-        {
-            user.EnsureStatsInitialized();
-            await _userRepository.UpdateAsync(user, token);
-        }
         var playerStats = new PlayerStatsResponse(user.Stats.TotalGames, user.Stats.TotalPlayTime, user.Stats.LongestSession);
         
         return Result<PlayerStatsResponse>.Success(playerStats);

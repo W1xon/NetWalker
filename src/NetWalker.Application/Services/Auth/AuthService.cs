@@ -24,7 +24,7 @@ public class AuthService : IAuthService
 
     public async Task<Result<AuthResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository.GetByIdAsync(request.Name, cancellationToken);
+        var user = await _userRepository.GetByNickAsync(request.Name, cancellationToken);
         if (user is null)
         {
             return Result<AuthResponse>.Failure("Неверный логин или пароль");
@@ -42,17 +42,21 @@ public class AuthService : IAuthService
     }
     public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
-        var existingUser = await _userRepository.GetByIdAsync(request.Name, cancellationToken);
+        var existingUser = await _userRepository.GetByNickAsync(request.Name, cancellationToken);
         if (existingUser is not null)
             return Result<AuthResponse>.Failure("Пользователь с таким ником уже существует");
 
         var passwordHash = _passwordHasher.Create(request.Password);
         var user = new User(request.Name, passwordHash);
 
-        var addResult = await _userRepository.AddAsync(user, cancellationToken);
-        if(!addResult.IsSuccess)
+        try
+        {
+            await _userRepository.AddAsync(user, cancellationToken);
+        }
+        catch
+        {
             return Result<AuthResponse>.Failure("Пользователь с таким ником уже существует");
-
+        }
         var token = _jwtProvider.GenerateToken(user);
         return Result<AuthResponse>.Success(new AuthResponse(token));
     }
@@ -74,10 +78,14 @@ public class AuthService : IAuthService
         var succes = user.TryChangePassword(passwordHash);
         if(!succes)
             return Result<AuthResponse>.Failure("Пароли совпадают");
-        var updateResult = await _userRepository.UpdateAsync(user, cancellationToken);
-        if(!updateResult.IsSuccess)
+        try
+        {
+            await _userRepository.UpdateAsync(user, cancellationToken);
+        }
+        catch
+        {
             return Result<AuthResponse>.Failure("Ошибка обновления пароля");
-
+        }
         var token = _jwtProvider.GenerateToken(user);
         
         return Result<AuthResponse>.Success(new AuthResponse(token));
