@@ -62,8 +62,8 @@ public class AuthController : ControllerBase
         Response.Cookies.Delete("jwt", new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict
+            Secure = false,
+            SameSite = SameSiteMode.Lax
         });
     
         return Ok(new { message = "Logged out" });
@@ -94,8 +94,8 @@ public class AuthController : ControllerBase
         HttpContext.Response.Cookies.Append("jwt", token, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
+            Secure = false,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTimeOffset.UtcNow.AddHours(1)
         });
 }
