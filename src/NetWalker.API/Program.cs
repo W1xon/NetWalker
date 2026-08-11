@@ -76,6 +76,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<ICodeGenerator, CodeGenerator>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordRequestValidator>();
 

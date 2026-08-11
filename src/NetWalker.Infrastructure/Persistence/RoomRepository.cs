@@ -29,7 +29,7 @@ public class RoomRepository : IRoomRepository
     { 
         return await _context.Rooms
             .AsNoTracking()
-            .Where(r => r.Status == RoomStatus.Lobby)
+            .Where(r => r.Status != RoomStatus.Abandoned && r.Status != RoomStatus.Finished)
             .ToListAsync(cancellationToken);
     }
 

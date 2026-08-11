@@ -1,6 +1,0 @@
-@NetWalker.API_HostAddress = http://localhost:5131
-
-GET {{NetWalker.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

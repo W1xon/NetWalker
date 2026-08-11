@@ -1,4 +1,3 @@
-using System.Buffers;
 using NetWalker.Application.Common.Interfaces.Security;
 
 namespace NetWalker.Infrastructure.Security;

@@ -83,7 +83,7 @@ public class AuthController : ControllerBase
             return Problem(
             detail: result.Error,
             statusCode: StatusCodes.Status400BadRequest,
-            title: "Registration failed"
+            title: "Change password failed"
         );
         
         AddSecureCookie(result.Value.Token);

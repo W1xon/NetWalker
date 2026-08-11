@@ -11,12 +11,21 @@ public class RoomService : IRoomService
 {
     private readonly ICodeGenerator _codeGenerator;
     private readonly IRoomRepository _roomRepository;
+
+    public RoomService(ICodeGenerator codeGenerator, IRoomRepository roomRepository)
+    {
+        _codeGenerator = codeGenerator;
+        _roomRepository = roomRepository;
+    }   
     public async Task<Result<CreateRoomResponse>> CreateRoomAsync(Guid hostId, CreateRoomRequest request, CancellationToken token = default)
     {
-        var room = request.FromCli ? Room.CreateFromCli(hostId, request.MaxPlayers, _codeGenerator.Generate()):
-            Room.CreateFromWeb(hostId, request.MaxPlayers, _codeGenerator.Generate(), _codeGenerator.Generate());
+        Room room;
+        if (request.FromCli)
+            room = Room.CreateFromCli(hostId, request.MaxPlayers, _codeGenerator.Generate());
+        else
+            room = Room.CreateFromWeb(hostId, request.MaxPlayers, _codeGenerator.Generate(), _codeGenerator.Generate());
         await _roomRepository.AddAsync(room, token);
-
+        
         return Result<CreateRoomResponse>.Success(new CreateRoomResponse(room.Id, room.SessionCode, room.TicketCode));
     }
 
@@ -27,7 +36,7 @@ public class RoomService : IRoomService
         if (existingRoom is null)
             return Result<GetRoomResponse>.Failure("Такой комнаты не существует");
 
-        return Result<GetRoomResponse>.Success(new GetRoomResponse(existingRoom.Status, existingRoom.MaxPlayers,
+        return Result<GetRoomResponse>.Success(new GetRoomResponse(existingRoom.Status, sessionCode, existingRoom.MaxPlayers,
             existingRoom.CreatedTime));
     }
 
@@ -36,7 +45,7 @@ public class RoomService : IRoomService
         var activeRooms =  await _roomRepository.GetActiveRoomsAsync(token);
 
         return activeRooms
-            .Select(room => new GetRoomResponse(room.Status, room.MaxPlayers, room.CreatedTime))
+            .Select(room => new GetRoomResponse(room.Status, room.SessionCode, room.MaxPlayers, room.CreatedTime))
             .ToList();
     }
 
