@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWalker — Комната</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/room-details.js" defer></script>
+</head>
+<body>
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <a href="/dashboard" class="logo">Net<span>Walker</span></a>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="sidebar-link">К списку комнат</a>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Комната: <span id="room-code-title">------</span></h1>
+            <p>Статус: <span id="room-status-badge" class="room-badge badge-lobby">Загрузка...</span></p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <label>Максимум игроков</label>
+                <span id="stat-max-players">0</span>
+            </div>
+            <div class="stat-item">
+                <label>Игроков в сети</label>
+                <span id="stat-current-players">0</span>
+            </div>
+            <div class="stat-item">
+                <label>Создана</label>
+                <span id="stat-created-time">--:--</span>
+            </div>
+        </div>
+
+        <h2 class="section-title">Игроки в сессии</h2>
+        <div class="room-grid" id="players-grid">
+            <!-- Сюда динамически рендерятся игроки -->
+        </div>
+    </main>
+</div>
+</body>
+</html>

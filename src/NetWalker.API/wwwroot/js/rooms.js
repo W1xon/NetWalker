@@ -149,7 +149,6 @@ async function loadActiveRooms() {
     rooms.forEach(room => {
         const card = document.createElement("div");
         card.className = "room-card";
-
         const code = room.sessionCode || room.code || "XXXXX";
 
         const statusObj = RoomStatusMap[room.status] ?? { text: "Неизвестно", class: "badge-secondary" };
@@ -162,7 +161,28 @@ async function loadActiveRooms() {
         <p>Макс. игроков: ${room.maxPlayers}<br>Создана: ${new Date(room.createdTime).toLocaleTimeString()}</p>
         <button class="btn btn-primary join-room-btn" data-code="${code}">Присоединиться</button>
     `;
-
         grid.appendChild(card);
+
+        document.querySelectorAll(".join-room-btn").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const code = e.target.getAttribute("data-code");
+
+                try {
+                    const response = await fetch(`/api/room/join-room/${code}`, {
+                        method: "POST"
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        alert(errData?.detail || "Не удалось присоединиться к комнате");
+                        return;
+                    }
+
+                    window.location.href = `/room/${code}`;
+                } catch (error) {
+                    console.error("Ошибка сети:", error);
+                }
+            });
+        });
     });
 }

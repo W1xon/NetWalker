@@ -9,6 +9,7 @@ public interface IRoomService
     
     Task<Result<GetRoomResponse>> GetRoomByCodeAsync(string sessionCode, CancellationToken token = default);
     Task<IReadOnlyList<GetRoomResponse>> GetActiveRoomsAsync(CancellationToken token = default);
+    Task<Result<RoomDetailsResponse>> GetRoomDetailsAsync(string sessionCode, CancellationToken token = default); 
 
     Task<Result> JoinRoomAsync(Guid playerId, string sessionCode, CancellationToken token = default);
     Task<Result> LeaveRoomAsync(Guid playerId, string sessionCode, CancellationToken token = default);

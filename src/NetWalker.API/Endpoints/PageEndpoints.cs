@@ -15,6 +15,9 @@ public static class PageEndpoints
 
         protectedPages.MapGet("/dashboard", (IWebHostEnvironment env) =>
             Results.File(Path.Combine(env.WebRootPath, "pages/dashboard.html"), "text/html"));
+       
+        protectedPages.MapGet("/room/{code}", (IWebHostEnvironment env) =>
+            Results.File(Path.Combine(env.WebRootPath, "pages/room.html"), "text/html"));
 
         protectedPages.MapGet("/profile", (IWebHostEnvironment env) =>
             Results.File(Path.Combine(env.WebRootPath, "pages/profile.html"), "text/html"));

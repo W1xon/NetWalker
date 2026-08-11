@@ -3,6 +3,7 @@ using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Interfaces.Security;
 using NetWalker.Application.Common.Models;
 using NetWalker.Application.DTOs.Room;
+using NetWalker.Domain;
 using NetWalker.Domain.Rooms;
 
 namespace NetWalker.Application.Services;
@@ -11,11 +12,13 @@ public class RoomService : IRoomService
 {
     private readonly ICodeGenerator _codeGenerator;
     private readonly IRoomRepository _roomRepository;
+    private readonly IUserRepository _userRepository;
 
-    public RoomService(ICodeGenerator codeGenerator, IRoomRepository roomRepository)
+    public RoomService(ICodeGenerator codeGenerator, IRoomRepository roomRepository, IUserRepository userRepository)
     {
         _codeGenerator = codeGenerator;
         _roomRepository = roomRepository;
+        _userRepository = userRepository;
     }   
     public async Task<Result<CreateRoomResponse>> CreateRoomAsync(Guid hostId, CreateRoomRequest request, CancellationToken token = default)
     {
@@ -47,6 +50,27 @@ public class RoomService : IRoomService
         return activeRooms
             .Select(room => new GetRoomResponse(room.Status, room.SessionCode, room.MaxPlayers, room.CreatedTime))
             .ToList();
+    }
+
+    public async Task<Result<RoomDetailsResponse>> GetRoomDetailsAsync(string sessionCode, CancellationToken token = default)
+    {
+        var room = await _roomRepository.GetBySessionCodeAsync(sessionCode, token);
+        
+        if(room is null)
+            return Result<RoomDetailsResponse>.Failure("Такой комнаты не существует");
+
+        var players = new List<RoomPlayerDto>();
+        foreach (var id in room.PlayerIds)
+        {
+            var user = await _userRepository.GetByIdAsync(id, token);
+            players.Add(new RoomPlayerDto(id, user.Nick, id == room.HostId));
+        }
+        
+        return Result<RoomDetailsResponse>.Success(new RoomDetailsResponse(sessionCode,
+            room.Status,
+            room.MaxPlayers,
+            players,
+            room.CreatedTime));
     }
 
     public async Task<Result> JoinRoomAsync(Guid playerId, string sessionCode, CancellationToken token = default)

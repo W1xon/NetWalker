@@ -18,6 +18,22 @@ public class RoomController : ControllerBase
         _roomService = roomService;
     }
 
+    [HttpGet("{code:length(6)}/details")]
+    public async Task<IActionResult> GetRoomDetails(string code, CancellationToken token)
+    {
+        var result = await _roomService.GetRoomDetailsAsync(code, token);
+        
+        if (!result.IsSuccess)
+        {
+            return Problem(
+                detail: result.Error,
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Get room details failed"
+            );
+        }
+        
+        return Ok(result.Value);
+    }
     [HttpGet("{code:length(6)}")]
     public async Task<IActionResult> GetRoomByCode(string code, CancellationToken token)
     {
@@ -41,6 +57,24 @@ public class RoomController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("join-room/{code:length(6)}")]
+    public async Task<IActionResult> JoinToRoom(string code, CancellationToken  token)
+    {
+        var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(strId, out Guid id))
+            return BadRequest("Некорректный Id пользователя");
+
+        var result = await _roomService.JoinRoomAsync(id, code, token);
+        
+        if(!result.IsSuccess)
+            return Problem(
+                detail: result.Error,
+                statusCode: StatusCodes.Status409Conflict,
+                title: "Join to room failed"
+            );
+        
+        return Ok();
+    }
     [HttpPost("create-room")]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomRequest request, CancellationToken token)
     {
