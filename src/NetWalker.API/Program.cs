@@ -13,6 +13,7 @@ using NetWalker.Application.Common.Validators;
 using NetWalker.Application.Services;
 using NetWalker.Application.Services.Auth;
 using NetWalker.Infrastructure.Auth;
+using NetWalker.Infrastructure.Background_Workers;
 using NetWalker.Infrastructure.Persistence;
 using NetWalker.Infrastructure.Security;
 
@@ -80,12 +81,16 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<ICodeGenerator, CodeGenerator>();
 
+builder.Services.AddHostedService<RoomWorker>();
+
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordRequestValidator>();
 
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
 });
+
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -98,7 +103,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

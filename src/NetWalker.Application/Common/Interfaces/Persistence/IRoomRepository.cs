@@ -11,5 +11,6 @@ public interface IRoomRepository
 
     Task AddAsync(Room room, CancellationToken cancellationToken = default);
     Task UpdateAsync(Room room, CancellationToken cancellationToken = default); 
-    void Remove(Room room);
+    Task Remove(Room room, CancellationToken cancellationToken = default);
+    Task Remove(string sessionCode, CancellationToken cancellationToken = default);
 }

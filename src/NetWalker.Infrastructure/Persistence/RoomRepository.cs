@@ -45,8 +45,16 @@ public class RoomRepository : IRoomRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public void Remove(Room room)
+    public async Task Remove(Room room, CancellationToken cancellationToken = default)
     {
         _context.Rooms.Remove(room);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+    
+    public async Task Remove(string sessionCode, CancellationToken cancellationToken = default)
+    {
+        Room? room = await GetBySessionCodeAsync(sessionCode, cancellationToken);
+        if (room is null) return;
+        await Remove(room, cancellationToken);
     }
 }

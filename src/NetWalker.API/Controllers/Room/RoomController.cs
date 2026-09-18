@@ -63,7 +63,7 @@ public class RoomController : ControllerBase
         var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(strId, out Guid id))
             return BadRequest("Некорректный Id пользователя");
-
+        
         var result = await _roomService.JoinRoomAsync(id, code, token);
         
         if(!result.IsSuccess)
