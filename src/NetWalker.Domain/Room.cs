@@ -66,9 +66,10 @@ public class Room
 
     public bool TryAddPlayer(Guid playerId)
     {
-        if (Status != RoomStatus.Lobby) return false;
+        //TODO: нужен когда будет консольный клиент
+        //if (Status != RoomStatus.Lobby) return false;
         if (_playerIds.Count >= MaxPlayers) return false;
-        if (_playerIds.Contains(playerId)) return false;
+        if (_playerIds.Contains(playerId)) return true;
 
         _playerIds.Add(playerId);
         TouchHeartbeat();
