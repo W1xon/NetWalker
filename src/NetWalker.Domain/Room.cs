@@ -57,7 +57,7 @@ public class Room
             Close(RoomStatus.Abandoned);
             return false;
         }
-
+        
         IsTicketClaimed = true;
         Status = RoomStatus.Lobby;
         TouchHeartbeat();
@@ -101,6 +101,7 @@ public class Room
             Close(RoomStatus.Abandoned);
         }
     }
+    public bool ContainsPlayer(Guid playerId) => _playerIds.Contains(playerId);
 
     public void Close(RoomStatus finalStatus = RoomStatus.Finished)
     {

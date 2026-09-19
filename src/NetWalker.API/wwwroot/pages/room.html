@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetWalker — Комната</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/10.0.11/signalr.min.js"></script>
     <script src="/js/room-details.js" defer></script>
+    <script src="/js/roomHubChat.js" defer></script>
 </head>
 <body>
 <div class="dashboard-layout">
@@ -20,28 +22,49 @@
 
     <main class="main-content">
         <div class="page-header">
+            <input type="button" id="leave-room-btn" value="Выйти" class="btn-danger" />
             <h1>Комната: <span id="room-code-title">------</span></h1>
             <p>Статус: <span id="room-status-badge" class="room-badge badge-lobby">Загрузка...</span></p>
         </div>
 
-        <div class="stats-bar">
-            <div class="stat-item">
-                <label>Максимум игроков</label>
-                <span id="stat-max-players">0</span>
-            </div>
-            <div class="stat-item">
-                <label>Игроков в сети</label>
-                <span id="stat-current-players">0</span>
-            </div>
-            <div class="stat-item">
-                <label>Создана</label>
-                <span id="stat-created-time">--:--</span>
-            </div>
-        </div>
+        <!-- Общий контейнер сетки -->
+        <div class="room-content-grid">
 
-        <h2 class="section-title">Игроки в сессии</h2>
-        <div class="room-grid" id="players-grid">
-            <!-- Сюда динамически рендерятся игроки -->
+            <!-- Левая колонка: статы и игроки -->
+            <div class="room-main-info">
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <label>Максимум игроков</label>
+                        <span id="stat-max-players">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Игроков в сети</label>
+                        <span id="stat-current-players">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Создана</label>
+                        <span id="stat-created-time">--:--</span>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Игроки в сессии</h2>
+                <div class="room-grid" id="players-grid">
+                    <!-- Карточки игроков -->
+                </div>
+            </div>
+
+            <!-- Правая колонка: изолированный чат -->
+            <div class="chat-container">
+                <h3 style="margin-top: 0; font-size: 1rem; margin-bottom: 12px;">Чат комнаты</h3>
+                <div id="chatroom" class="chat-messages">
+                    <!-- Сюда падают сообщения -->
+                </div>
+                <div class="chat-input-area" id="inputForm">
+                    <input type="text" id="message" placeholder="Введите сообщение..." style="flex-grow: 1;" />
+                    <input type="button" id="sendBtn" value="Отправить" />
+                </div>
+            </div>
+
         </div>
     </main>
 </div>

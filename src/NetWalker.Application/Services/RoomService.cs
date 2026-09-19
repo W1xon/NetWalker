@@ -13,12 +13,14 @@ public class RoomService : IRoomService
     private readonly ICodeGenerator _codeGenerator;
     private readonly IRoomRepository _roomRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IRoomHubNotifier _roomHubNotifier;
 
-    public RoomService(ICodeGenerator codeGenerator, IRoomRepository roomRepository, IUserRepository userRepository)
+    public RoomService(ICodeGenerator codeGenerator, IRoomRepository roomRepository, IUserRepository userRepository, IRoomHubNotifier roomHubNotifier)
     {
         _codeGenerator = codeGenerator;
         _roomRepository = roomRepository;
         _userRepository = userRepository;
+        _roomHubNotifier = roomHubNotifier;
     }   
     public async Task<Result<CreateRoomResponse>> CreateRoomAsync(Guid hostId, CreateRoomRequest request, CancellationToken token = default)
     {
@@ -79,10 +81,17 @@ public class RoomService : IRoomService
         
         if(existingRoom is null)
             return Result.Failure("Такой комнаты не существует");
+        bool isAlreadyInRoom = existingRoom.ContainsPlayer(playerId);
         if(!existingRoom.TryAddPlayer(playerId))
             return Result.Failure("Невозможно присоединиться к комнате");
         
         await _roomRepository.UpdateAsync(existingRoom, token);
+        if(!isAlreadyInRoom)
+        {
+            var user = await _userRepository.GetByIdAsync(playerId, token);
+            await _roomHubNotifier.NotifyJoinedRoomAsync(sessionCode,
+                new RoomPlayerDto(playerId, user.Nick, playerId == existingRoom.HostId), token);
+        }
         return Result.Success();
     }
 
@@ -92,10 +101,18 @@ public class RoomService : IRoomService
         
         if(existingRoom is null)
             return Result.Failure("Такой комнаты не существует");
+        
+        
+        var user = await _userRepository.GetByIdAsync(playerId, token);
         if(!existingRoom.TryLeavePlayer(playerId))
             return Result.Failure("Вы не можете покинуть комнату, т.к. не состоите в ней");
         
         await _roomRepository.UpdateAsync(existingRoom, token);
+        
+        if(!existingRoom.ContainsPlayer(playerId))
+        {
+            await _roomHubNotifier.NotifyLeavedRoomAsync(sessionCode,user.Nick, token);
+        }
         return Result.Success();
     }
 }

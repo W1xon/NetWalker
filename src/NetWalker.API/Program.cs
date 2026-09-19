@@ -15,6 +15,7 @@ using NetWalker.Application.Services.Auth;
 using NetWalker.Infrastructure.Auth;
 using NetWalker.Infrastructure.Background_Workers;
 using NetWalker.Infrastructure.Persistence;
+using NetWalker.Infrastructure.RoomHubs;
 using NetWalker.Infrastructure.Security;
 
 Env.TraversePath().Load();
@@ -77,6 +78,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IRoomHubNotifier, RoomHubNotifier>();
+
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<ICodeGenerator, CodeGenerator>();
@@ -94,6 +97,7 @@ builder.Services.AddControllers(options =>
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -102,12 +106,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseStaticFiles();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapPageEndpoints();
 app.MapControllers();
+app.MapHub<RoomSessionHub>("/room/chat");
 app.Run();

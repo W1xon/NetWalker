@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetWalker.Application.Common.Interfaces;
 using NetWalker.Application.DTOs.Room;
+using NetWalker.Application.Services;
 
 namespace NetWalker.API.Controllers;
 
@@ -12,10 +13,12 @@ namespace NetWalker.API.Controllers;
 public class RoomController : ControllerBase
 {
     private readonly IRoomService _roomService;
+    private readonly IRoomHubNotifier _roomHubNotifier;
 
-    public RoomController(IRoomService roomService)
+    public RoomController(IRoomService roomService, IRoomHubNotifier roomHubNotifier)
     {
         _roomService = roomService;
+        _roomHubNotifier = roomHubNotifier;
     }
 
     [HttpGet("{code:length(6)}/details")]
@@ -60,8 +63,8 @@ public class RoomController : ControllerBase
     [HttpPost("join-room/{code:length(6)}")]
     public async Task<IActionResult> JoinToRoom(string code, CancellationToken  token)
     {
-        var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(strId, out Guid id))
+        var id = GetUserIdFromClaims();
+        if (id == Guid.Empty)
             return BadRequest("Некорректный Id пользователя");
         
         var result = await _roomService.JoinRoomAsync(id, code, token);
@@ -72,16 +75,33 @@ public class RoomController : ControllerBase
                 statusCode: StatusCodes.Status409Conflict,
                 title: "Join to room failed"
             );
-        
         return Ok();
     }
+
+    [HttpPost("leave-room/{code:length(6)}")]
+    public async Task<IActionResult> LeaveRoom(string code, CancellationToken token)
+    {
+        var id = GetUserIdFromClaims();
+        if (id == Guid.Empty)
+            return BadRequest("Некорректный Id пользователя");
+        var result = await _roomService.LeaveRoomAsync(id, code, token);
+        
+        if(!result.IsSuccess)
+            return Problem(
+                detail: result.Error,
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Leave room failed"
+            );
+        return Ok();
+    }
+    
+    
     [HttpPost("create-room")]
     public async Task<IActionResult> CreateRoom([FromBody] CreateRoomRequest request, CancellationToken token)
     {
-        var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(strId, out Guid id))
+        var id = GetUserIdFromClaims();
+        if (id == Guid.Empty)
             return BadRequest("Некорректный Id пользователя");
-
         var result = await _roomService.CreateRoomAsync(id, request, token);
         
         if(!result.IsSuccess)
@@ -92,5 +112,13 @@ public class RoomController : ControllerBase
             );
         
         return Ok(result.Value);
+    }
+
+    private Guid GetUserIdFromClaims()
+    {
+        var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!Guid.TryParse(strId, out Guid id))
+            return Guid.Empty;
+        return id;
     }
 }

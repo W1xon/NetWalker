@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-
 async function CreateRoom(maxPlayers) {
     try {
         const response = await fetch("/api/room/create-room", {
