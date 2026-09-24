@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NetWalker.Domain;
+using NetWalker.Domain.Users;
 
 namespace NetWalker.Infrastructure.Persistence;
 

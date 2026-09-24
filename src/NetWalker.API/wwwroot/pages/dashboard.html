@@ -15,13 +15,13 @@
             <a href="/" class="logo">Net<span>Walker</span></a>
             <nav class="sidebar-nav">
                 <a href="/dashboard" class="sidebar-link active">
-                    Активные комнаты
+                    <span class="nav-icon">🎮</span> Активные комнаты
                 </a>
                 <a href="#" id="create-room-trigger" class="sidebar-link">
-                    Создать сессию
+                    <span class="nav-icon">➕</span> Создать сессию
                 </a>
                 <a href="/profile" class="sidebar-link">
-                    Мой профиль
+                    <span class="nav-icon">👤</span> Мой профиль
                 </a>
             </nav>
         </div>
@@ -37,13 +37,18 @@
 
     <main class="main-content">
         <div class="page-header">
-            <h1>Хаб сессий</h1>
-            <p>Активные игровые комнаты и статистика сервера</p>
+            <div>
+                <h1>Хаб сессий</h1>
+                <p>Активные игровые комнаты и статистика сервера CmdWalker</p>
+            </div>
+            <button id="create-room-trigger" class="btn btn-primary" onclick="document.getElementById('create-room-modal').style.display='flex'">
+                Создать комнату
+            </button>
         </div>
 
         <div class="stats-bar">
             <div class="stat-item">
-                <label>Активных сессий</label>
+                <label>Активных комнат</label>
                 <span id="stat-active-sessions">0</span>
             </div>
             <div class="stat-item">
@@ -56,21 +61,22 @@
             </div>
         </div>
 
-        <h2 class="section-title">Список комнат</h2>
-        <p style="color: var(--text-secondary); margin-top: -8px; margin-bottom: 20px;">Подключайтесь к существующей сессии или заберите Host Ticket для своей игры.</p>
-
+        <h2 class="section-title">Список открытых лобби</h2>
         <div class="room-grid" id="room-grid"></div>
     </main>
 </div>
 
-<div id="create-room-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 9999;">
-    <div style="background: #1e1e1e; padding: 25px; border-radius: 8px; width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); color: #fff;">
-        <h3 style="margin-top:0; margin-bottom: 15px;">Создание комнаты</h3>
-        <label style="display:block; margin-bottom: 5px; color: #aaa;">Максимум игроков:</label>
-        <input type="number" id="max-players-input" value="4" min="2" max="16" style="width:100%; padding:8px; margin-bottom:20px; box-sizing: border-box; background: #2a2a2a; border: 1px solid #444; color: #fff;">
-        <div style="display:flex; justify-content:space-between; gap: 10px;">
-            <button id="btn-submit-create" class="btn btn-primary" style="flex:1;">Создать</button>
-            <button id="btn-close-modal" class="btn btn-secondary" style="flex:1;">Отмена</button>
+<!-- Модальное окно создания комнаты -->
+<div id="create-room-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <h3>Создание комнаты</h3>
+        <div class="form-group">
+            <label for="max-players-input">Максимум игроков (от 2 до 16):</label>
+            <input type="number" id="max-players-input" value="4" min="2" max="16">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 24px;">
+            <button id="btn-submit-create" class="btn btn-primary" style="flex: 1;">Создать</button>
+            <button id="btn-close-modal" class="btn btn-secondary" style="flex: 1;">Отмена</button>
         </div>
     </div>
 </div>

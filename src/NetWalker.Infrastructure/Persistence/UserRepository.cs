@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Models;
 using NetWalker.Domain;
+using NetWalker.Domain.Users;
 using Npgsql;
 
 namespace NetWalker.Infrastructure.Persistence;

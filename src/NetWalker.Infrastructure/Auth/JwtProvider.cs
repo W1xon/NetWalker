@@ -4,6 +4,7 @@ using NetWalker.Application.Common.Interfaces.Security;
 using NetWalker.Domain;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NetWalker.Domain.Users;
 
 namespace NetWalker.Infrastructure.Auth;
 

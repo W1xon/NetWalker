@@ -6,12 +6,7 @@ function showToast(message, type = 'info', title = '') {
         document.body.appendChild(container);
     }
 
-    const icons = {
-        success: '✓',
-        error: '✕',
-        info: 'ℹ'
-    };
-
+    const icons = { success: '✓', error: '✕', info: 'ℹ' };
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
@@ -138,14 +133,13 @@ function setButtonLoading(btn, loading = true) {
     if (window.location.pathname.startsWith("/auth")) return;
 
     try {
-        const response = await fetch("/api/User/profile", { method: "GET" });
+        const response = await fetch("/api/User/profile");
         if (!response.ok) {
             window.location.replace("/auth");
             return;
         }
 
         const profile = await response.json();
-
         if (profile.nick) {
             document.querySelectorAll("#sidebar-user-nick, #user-nick, .user-nick").forEach(el => {
                 el.textContent = profile.nick;
@@ -156,12 +150,11 @@ function setButtonLoading(btn, loading = true) {
         if (typeof window.handleProfileData === "function") {
             window.handleProfileData(profile);
         }
-
     } catch (err) {
+        console.error("Ошибка инициализации профиля:", err);
         window.location.replace("/auth");
     }
 })();
-
 
 document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.querySelector("#logout-btn");
@@ -172,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const response = await fetch("/api/auth/logout", { method: "POST" });
                 if (response.ok) {
                     showToast("Вы успешно вышли из системы", "success", "До встречи!");
-                    setTimeout(() => window.location.replace("/"), 800);
+                    setTimeout(() => window.location.replace("/"), 600);
                 } else {
                     showToast("Не удалось выполнить выход", "error", "Ошибка");
                 }

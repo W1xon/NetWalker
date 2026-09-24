@@ -10,28 +10,56 @@ document.addEventListener("DOMContentLoaded", () => {
     const roomCode = pathParts[pathParts.length - 1];
 
     const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/room/chat")
+        .withUrl("/room/chat", {
+            withCredentials: true
+        })
         .build();
 
+    const messageInput = document.getElementById("message");
     const sendBtn = document.getElementById("sendBtn");
+    const chatRoom = document.getElementById("chatroom");
+
+    function sendMessage() {
+        if (!messageInput) return;
+        const messageText = messageInput.value.trim();
+        if (!messageText) return;
+
+        hubConnection.invoke("Send", roomCode, messageText)
+            .then(() => {
+                messageInput.value = "";
+                messageInput.focus();
+            })
+            .catch(function (err) {
+                console.error("Ошибка при отправке сообщения:", err.toString());
+            });
+    }
+
     if (sendBtn) {
-        sendBtn.addEventListener("click", function () {
-            var message = document.getElementById("message").value;
-            hubConnection.invoke("Send", roomCode, message)
-                .catch(function (err) {
-                    return console.error(err.toString());
-                });
+        sendBtn.addEventListener("click", sendMessage);
+    }
+
+    if (messageInput) {
+        messageInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault(); 
+                sendMessage();
+            }
         });
     }
 
-    hubConnection.on("ReceiveMessage", function(message) {
-        let messageElement = document.createElement("p");
+    hubConnection.on("ReceiveMessage", function (message) {
+        if (!chatRoom) return;
+        const messageElement = document.createElement("p");
         messageElement.textContent = message;
-        document.getElementById("chatroom").appendChild(messageElement);
+        chatRoom.appendChild(messageElement);
+
+        chatRoom.scrollTop = chatRoom.scrollHeight;
     });
 
-    hubConnection.on("PlayerJoined", function(player) {
+    hubConnection.on("PlayerJoined", function (player) {
         const grid = document.getElementById("players-grid");
+        if (!grid) return;
+
         const card = document.createElement("div");
         card.className = "room-card";
         card.dataset.playerId = player.id;
@@ -47,10 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
         grid.appendChild(card);
     });
 
-    hubConnection.on("PlayerLeaved", function(name) {
+    hubConnection.on("PlayerLeaved", function (name) {
         const grid = document.getElementById("players-grid");
+        if (!grid) return;
+
         const playerCard = Array.from(grid.children).find(card =>
-            card.querySelector("h4").textContent.trim() === name.trim()
+            card.querySelector("h4")?.textContent.trim() === name.trim()
         );
 
         if (playerCard) {
@@ -63,11 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
             hubConnection.invoke("JoinGroup", roomCode);
         })
         .catch(function (err) {
-            return console.error(err.toString());
+            console.error("Ошибка подключения к SignalR:", err.toString());
         });
 });
 
-async function LeaveRoom(){
+async function LeaveRoom() {
     const code = window.location.pathname.split("/").pop();
     try {
         const response = await fetch(`/api/room/leave-room/${code}`, {
@@ -75,7 +105,7 @@ async function LeaveRoom(){
         });
 
         if (!response.ok) {
-            const errData = await response.json();
+            const errData = await response.json().catch(() => null);
             alert(errData?.detail || "Не удалось покинуть комнату");
             return;
         }

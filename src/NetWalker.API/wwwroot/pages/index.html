@@ -3,51 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetWalker — Web Control Plane</title>
+    <title>NetWalker — Панель управления сессиями</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .hero-section {
+            padding: 100px 0 60px;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-section p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 580px;
+            margin: 0 auto 36px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+            margin-bottom: 100px;
+        }
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 32px;
+            transition: var(--transition);
+        }
+        .feature-card:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        .feature-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+        }
+        .navbar {
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(10, 11, 14, 0.85);
+            backdrop-filter: blur(16px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 0;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
 <header class="navbar">
     <div class="container">
         <a href="/" class="logo">Net<span>Walker</span></a>
-        <div class="nav-links">
+        <div style="display: flex; gap: 12px;">
             <a href="/auth" class="btn btn-secondary">Вход</a>
             <a href="/dashboard" class="btn btn-primary">Панель управления</a>
         </div>
     </div>
 </header>
 
-<main>
-    <section class="hero">
-        <div class="container">
-            <h1>Панель управления сессиями CmdWalker</h1>
-            <p>Управляйте игровыми комнатами через браузер, создавайте хосты и присоединяйтесь к сессиям консольного рогалика в реальном времени.</p>
-            <div class="hero-actions">
-                <a href="/dashboard" class="btn btn-primary">Открыть дашборд</a>
-                <a href="#features" class="btn btn-secondary">Как это работает</a>
-            </div>
+<main class="container">
+    <section class="hero-section">
+        <h1>Панель управления сессиями CmdWalker</h1>
+        <p>Управляйте игровыми комнатами через веб-интерфейс, создавайте лобби и подключайтесь к консольному рогалику в реальном времени.</p>
+        <div style="display: flex; justify-content: center; gap: 16px;">
+            <a href="/dashboard" class="btn btn-primary" style="padding: 12px 28px; font-size: 1rem;">Открыть хаб комнат</a>
+            <a href="/auth" class="btn btn-secondary" style="padding: 12px 28px; font-size: 1rem;">Личный кабинет</a>
         </div>
     </section>
 
-    <section id="features" class="features">
-        <div class="container">
-            <div class="features-grid">
-                <div class="feature-card">
-                    <span class="feature-icon">🌐</span>
-                    <h3>Веб-управление сессиями</h3>
-                    <p>Создавайте комнаты напрямую через веб-интерфейс и забирайте права хоста в игре с помощью Host Ticket.</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">🔑</span>
-                    <h3>Быстрый доступ по коду</h3>
-                    <p>Находите открытые комнаты в общем списке или подключайтесь по уникальному 5-значному коду сессии.</p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">⚡</span>
-                    <h3>Live Мониторинг</h3>
-                    <p>Отслеживайте активные комнаты, статус хостов и общую статистику игроков в реальном времени.</p>
-                </div>
-            </div>
+    <section class="features-grid">
+        <div class="feature-card">
+            <span class="feature-icon">🌐</span>
+            <h3>Веб-оркестрация</h3>
+            <p>Создавайте комнаты напрямую через веб-интерфейс и получайте Host Ticket для управления игрой с консоли.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">⚡</span>
+            <h3>Real-time Синхронизация</h3>
+            <p>SignalR сокеты обеспечивают мгновенное обновление списка игроков и встроенного комнатного чата.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">🔒</span>
+            <h3>Автономная безопасность</h3>
+            <p>HttpOnly Refresh Sessions гарантируют постоянный защищенный доступ без необходимости ручного перезахода.</p>
         </div>
     </section>
 </main>

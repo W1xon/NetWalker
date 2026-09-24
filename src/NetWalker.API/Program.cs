@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetWalker.API.Endpoints;
 using NetWalker.API.Filters;
+using NetWalker.API.Middlewares;
 using NetWalker.Application.Common.Interfaces;
 using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.Common.Interfaces.Security;
@@ -45,7 +46,11 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
         {
             OnMessageReceived = context =>
             {
-                if(context.Request.Cookies.TryGetValue("jwt", out var token))
+                if(context.HttpContext.Items.TryGetValue("jwt_access", out var itemToken) && itemToken is string strToken)
+                {
+                    context.Token = strToken;
+                }
+                else if(context.Request.Cookies.TryGetValue("jwt_access", out var token))
                 {
                     context.Token = token;
                 }
@@ -75,8 +80,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserSessionRepository, UserSessionRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 
 builder.Services.AddScoped<IRoomHubNotifier, RoomHubNotifier>();
 
@@ -108,7 +115,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseMiddleware<TokenRefreshMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

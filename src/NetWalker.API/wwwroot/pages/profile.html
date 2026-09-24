@@ -15,16 +15,13 @@
             <a href="/" class="logo">Net<span>Walker</span></a>
             <nav class="sidebar-nav">
                 <a href="/dashboard" class="sidebar-link">
-                    <span class="nav-icon">🎮</span>
-                    Активные комнаты
+                    <span class="nav-icon">🎮</span> Активные комнаты
                 </a>
                 <a href="/dashboard" class="sidebar-link">
-                    <span class="nav-icon">➕</span>
-                    Создать сессию
+                    <span class="nav-icon">➕</span> Создать сессию
                 </a>
                 <a href="/profile" class="sidebar-link active">
-                    <span class="nav-icon">📊</span>
-                    Мой профиль
+                    <span class="nav-icon">👤</span> Мой профиль
                 </a>
             </nav>
         </div>
@@ -40,15 +37,17 @@
 
     <main class="main-content">
         <div class="page-header">
-            <h1 class="user-nick" id="user-nick" style="margin: 0;">PlayerName</h1>
-            <p style="color: var(--text-secondary); margin-top: 4px;">
-                ID: <code id="user-id" style="font-size: 0.85rem;">00000000-0000-0000-0000-000000000000</code>
-                · Зарегистрирован: <span id="user-created-time">01.01.1970 00:00</span>
-            </p>
+            <div>
+                <h1 class="user-nick" id="user-nick">PlayerName</h1>
+                <p>
+                    ID: <code id="user-id" style="font-family: var(--font-mono); color: #a5b4fc; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">00000000-0000-0000-0000-000000000000</code>
+                    · Регистрация: <span id="user-created-time">01.01.1970 00:00</span>
+                </p>
+            </div>
         </div>
 
         <h2 class="section-title">📈 Статистика CmdWalker</h2>
-        <div class="stats-bar" style="margin-bottom: 36px;">
+        <div class="stats-bar">
             <div class="stat-item">
                 <label>Сыграно игр</label>
                 <span id="stat-total-games">0</span>
@@ -94,7 +93,7 @@
                 <div id="profile-error-message" class="error-message" style="display: none;"></div>
                 <div id="profile-info-message" class="info-message" style="display: none;"></div>
 
-                <button type="submit" class="btn btn-primary" id="change-pwd-btn">
+                <button type="submit" class="btn btn-primary" id="change-pwd-btn" style="width: 100%;">
                     <span id="pwd-btn-text">Обновить пароль</span>
                 </button>
             </form>

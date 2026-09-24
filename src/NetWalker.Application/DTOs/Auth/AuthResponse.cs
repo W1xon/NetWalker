@@ -1,3 +1,3 @@
 namespace NetWalker.Application.DTOs.Auth;
 
-public record AuthResponse(string Token);
+public record AuthResponse(string AccessToken, string RefreshToken);

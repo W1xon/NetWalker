@@ -1,4 +1,4 @@
-namespace NetWalker.Domain;
+namespace NetWalker.Domain.Users;
 
 public class PlayerStats
 {

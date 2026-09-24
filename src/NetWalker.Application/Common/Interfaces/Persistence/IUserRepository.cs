@@ -1,3 +1,5 @@
+using NetWalker.Domain.Users;
+
 namespace NetWalker.Application.Common.Interfaces.Persistence;
 
 using NetWalker.Domain;

@@ -4,6 +4,7 @@ using NetWalker.Application.Common.Interfaces.Security;
 using NetWalker.Application.Common.Models;
 using NetWalker.Application.DTOs.Auth;
 using NetWalker.Domain;
+using NetWalker.Domain.Users;
 
 namespace NetWalker.Application.Services.Auth;
 
@@ -11,15 +12,14 @@ public class AuthService : IAuthService
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUserRepository _userRepository;
-    private readonly IJwtProvider _jwtProvider;
-
+    private readonly IUserSessionService _userSessionService;
     public AuthService(IPasswordHasher passwordHasher, 
-        IUserRepository userRepository, 
-        IJwtProvider jwtProvider)
+        IUserRepository userRepository,
+        IUserSessionService userSessionService)
     {
         _passwordHasher = passwordHasher;
         _userRepository = userRepository;
-        _jwtProvider = jwtProvider;
+        _userSessionService = userSessionService;
     }
 
     public async Task<Result<AuthResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
@@ -36,9 +36,7 @@ public class AuthService : IAuthService
             return Result<AuthResponse>.Failure("Неверный логин или пароль");
         }
 
-        var token = _jwtProvider.GenerateToken(user);
-
-        return Result<AuthResponse>.Success( new AuthResponse(token));
+        return await _userSessionService.CreateSessionAsync(user);
     }
     public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
     {
@@ -57,8 +55,8 @@ public class AuthService : IAuthService
         {
             return Result<AuthResponse>.Failure("Пользователь с таким ником уже существует");
         }
-        var token = _jwtProvider.GenerateToken(user);
-        return Result<AuthResponse>.Success(new AuthResponse(token));
+
+        return await _userSessionService.CreateSessionAsync(user, cancellationToken);
     }
 
     public async Task<Result<AuthResponse>> ChangePassword(ChangePasswordRequest request, Guid id, CancellationToken cancellationToken = default)
@@ -86,8 +84,7 @@ public class AuthService : IAuthService
         {
             return Result<AuthResponse>.Failure("Ошибка обновления пароля");
         }
-        var token = _jwtProvider.GenerateToken(user);
         
-        return Result<AuthResponse>.Success(new AuthResponse(token));
+        return await _userSessionService.CreateSessionAsync(user, cancellationToken);
     }
 }

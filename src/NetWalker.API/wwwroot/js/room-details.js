@@ -21,12 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function GetRoomDetails(code) {
     try {
-        const response = await fetch(`/api/room/${code}/details`, {
-            method: "GET"
-        });
+        const response = await fetch(`/api/room/${code}/details`);
 
         if (!response.ok) {
-            const errData = await response.json();
+            const errData = await response.json().catch(() => null);
             const errMessage = errData?.detail || "Не удалось получить детали комнаты";
             alert(errMessage);
             window.location.href = "/dashboard";
@@ -35,7 +33,6 @@ async function GetRoomDetails(code) {
 
         const room = await response.json();
         renderRoomDetails(room);
-
     } catch (error) {
         console.error("Критическая ошибка сети:", error);
     }

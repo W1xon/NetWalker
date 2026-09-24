@@ -3,15 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetWalker — Страница не найдена</title>
+    <title>NetWalker — 404</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .error-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+        }
+        .error-code {
+            font-size: 7rem;
+            font-weight: 900;
+            font-family: var(--font-mono);
+            letter-spacing: -0.05em;
+            background: linear-gradient(180deg, #fff 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+    </style>
 </head>
 <body>
-<div class="error-page">
-    <h1>404</h1>
-    <h2>Страница не найдена</h2>
-    <p>Похоже, ты забрёл не в ту комнату или локация была удалена.</p>
-    <a href="/" class="btn btn-primary">Вернуться на главную</a>
+<div class="error-wrapper">
+    <div>
+        <div class="error-code">404</div>
+        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Комната не найдена</h2>
+        <p style="color: var(--text-secondary); max-width: 420px; margin: 0 auto 28px;">
+            Похоже, ты ошибся адресом локации или игровая сессия была окончательно закрыта хостом.
+        </p>
+        <a href="/" class="btn btn-primary">Вернуться на главную</a>
+    </div>
 </div>
 </body>
 </html>

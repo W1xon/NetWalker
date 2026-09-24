@@ -10,6 +10,9 @@
 <body>
 <div class="auth-wrapper">
     <div class="auth-card">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="/" class="logo" style="justify-content: center; font-size: 1.6rem;">Net<span>Walker</span></a>
+        </div>
         <h1 id="auth-title">Вход в систему</h1>
         <p class="auth-subtitle" id="auth-subtitle">Введите данные для доступа к панели управления</p>
 
@@ -17,7 +20,7 @@
             <div class="form-group">
                 <label for="username">Имя пользователя</label>
                 <input type="text" id="username" name="Name" required autocomplete="username" placeholder="Ваш никнейм">
-                <p class="hint-text" id="username-hint">От 3 до 32 символов, только латиница, цифры, _ и -</p>
+                <p class="hint-text" id="username-hint">От 3 до 32 символов, латиница, цифры, _ и -</p>
             </div>
 
             <div class="form-group">
@@ -34,7 +37,7 @@
 
             <div id="error-message" class="error-message" style="display: none;"></div>
 
-            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%;">
+            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px;">
                 <span id="btn-text">Войти</span>
             </button>
         </form>
