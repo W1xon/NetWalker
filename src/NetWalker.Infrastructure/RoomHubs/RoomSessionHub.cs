@@ -11,12 +11,17 @@ public class RoomSessionHub : Hub
     private readonly IUserRepository _userRepository;
     private readonly IRoomRepository _roomRepository;
     private readonly IRoomHubNotifier _roomHubNotifier;
+    private readonly IRoomChatRepository _roomChatRepository;
     
-    public RoomSessionHub(IUserRepository userRepository, IRoomRepository roomRepository, IRoomHubNotifier roomHubNotifier)
+    public RoomSessionHub(IUserRepository userRepository,
+        IRoomRepository roomRepository,
+        IRoomHubNotifier roomHubNotifier,
+        IRoomChatRepository roomChatRepository)
     {
         _userRepository = userRepository;
         _roomRepository = roomRepository;
         _roomHubNotifier = roomHubNotifier;
+        _roomChatRepository = roomChatRepository;
     }
     
     public async Task Send(string roomCode, string message)
@@ -31,7 +36,7 @@ public class RoomSessionHub : Hub
         }
         var user = await _userRepository.GetByIdAsync(userId);
         var nickname = user?.Nick ?? "Anonymous";
-        
+        await _roomChatRepository.AddMessage(roomCode, $"{nickname}: {message}");
         await _roomHubNotifier.NotifyMessageReceivedAsync(roomCode, $"{nickname}: {message}");
     }
     public async Task JoinGroup(string roomCode)
@@ -43,6 +48,16 @@ public class RoomSessionHub : Hub
             return;
         }
         await Groups.AddToGroupAsync(Context.ConnectionId, roomCode);
+
+        var messages = await _roomChatRepository.GetMessageFromChat(roomCode);
+    
+        if (messages is not null)
+        {
+            foreach (var msg in messages)
+            {
+                await _roomHubNotifier.NotifyCallerAsync(Context.ConnectionId, msg);
+            }
+        }
     }
     
     public async Task LeaveGroup(string roomCode)

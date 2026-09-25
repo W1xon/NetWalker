@@ -55,7 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chatRoom.scrollTop = chatRoom.scrollHeight;
     });
+    hubConnection.on("ReceiveCaller", function (message) {
+        if (!chatRoom) return;
+        const messageElement = document.createElement("p");
+        messageElement.textContent = message;
+        chatRoom.appendChild(messageElement);
 
+        chatRoom.scrollTop = chatRoom.scrollHeight;
+    });
     hubConnection.on("PlayerJoined", function (player) {
         const grid = document.getElementById("players-grid");
         if (!grid) return;

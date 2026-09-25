@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using NetWalker.Application.Common.Interfaces.Persistence;
 using NetWalker.Application.DTOs.Room;
 using NetWalker.Application.Services;
 
@@ -19,7 +20,7 @@ public class RoomHubNotifier : IRoomHubNotifier
 
     public async Task NotifyCallerAsync(string connectionId, string message, CancellationToken token = default)
     {
-        await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveError", message, token);
+        await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveCaller", message, token);
     }
 
     public async Task NotifyJoinedRoomAsync(string roomId, RoomPlayerDto playerDto, CancellationToken token = default)

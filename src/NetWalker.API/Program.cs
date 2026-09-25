@@ -86,6 +86,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 
 builder.Services.AddScoped<IRoomHubNotifier, RoomHubNotifier>();
+builder.Services.AddScoped<IRoomChatRepository, RoomChatRepository>();
 
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
