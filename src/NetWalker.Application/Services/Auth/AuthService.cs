@@ -22,7 +22,7 @@ public class AuthService : IAuthService
         _userSessionService = userSessionService;
     }
 
-    public async Task<Result<AuthResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthResponse>> LoginAsync(LoginRequest request, SessionContextDto sessionContext, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetByNickAsync(request.Name, cancellationToken);
         if (user is null)
@@ -36,9 +36,9 @@ public class AuthService : IAuthService
             return Result<AuthResponse>.Failure("Неверный логин или пароль");
         }
 
-        return await _userSessionService.CreateSessionAsync(user);
+        return await _userSessionService.CreateSessionAsync(user, sessionContext, cancellationToken);
     }
-    public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthResponse>> RegisterAsync(RegisterRequest request, SessionContextDto sessionContext, CancellationToken cancellationToken = default)
     {
         var existingUser = await _userRepository.GetByNickAsync(request.Name, cancellationToken);
         if (existingUser is not null)
@@ -56,10 +56,10 @@ public class AuthService : IAuthService
             return Result<AuthResponse>.Failure("Пользователь с таким ником уже существует");
         }
 
-        return await _userSessionService.CreateSessionAsync(user, cancellationToken);
+        return await _userSessionService.CreateSessionAsync(user, sessionContext, cancellationToken);
     }
 
-    public async Task<Result<AuthResponse>> ChangePassword(ChangePasswordRequest request, Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthResponse>> ChangePassword(ChangePasswordRequest request, Guid id, SessionContextDto sessionContext, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetByIdAsync(id, cancellationToken);
         
@@ -85,6 +85,6 @@ public class AuthService : IAuthService
             return Result<AuthResponse>.Failure("Ошибка обновления пароля");
         }
         
-        return await _userSessionService.CreateSessionAsync(user, cancellationToken);
+        return await _userSessionService.CreateSessionAsync(user, sessionContext, cancellationToken);
     }
 }

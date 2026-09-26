@@ -18,6 +18,7 @@ using NetWalker.Infrastructure.Background_Workers;
 using NetWalker.Infrastructure.Persistence;
 using NetWalker.Infrastructure.RoomHubs;
 using NetWalker.Infrastructure.Security;
+using UAParser.Extensions;
 
 Env.TraversePath().Load();
 
@@ -76,6 +77,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddUserAgentParser();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();

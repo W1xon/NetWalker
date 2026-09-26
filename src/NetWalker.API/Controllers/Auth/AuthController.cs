@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetWalker.Application.Common.Interfaces;
 using NetWalker.Application.Common.Interfaces.Security;
 using NetWalker.Application.DTOs.Auth;
+using UAParser.Interfaces;
 
 namespace NetWalker.API.Controllers.Auth;
 
@@ -13,10 +14,14 @@ public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
     private readonly IUserSessionService _userSessionService;
-    public AuthController(IAuthService authService, IUserSessionService userSessionService)
+    private readonly IUserAgentParser _userAgentParser;
+    public AuthController(IAuthService authService,
+        IUserSessionService userSessionService,
+        IUserAgentParser userAgentParser)
     {
         _authService = authService;
         _userSessionService = userSessionService;
+        _userAgentParser = userAgentParser;
     }
     [HttpGet("me")]
     [Authorize]
@@ -25,34 +30,11 @@ public class AuthController : ControllerBase
         return Ok(new { name = User.Identity?.Name });
     }
 
-    [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh()
-    {
-        var refreshToken = Request.Cookies["refreshToken"];
-        if (string.IsNullOrEmpty(refreshToken))
-        {
-            return Unauthorized(new { detail = "Refresh token missing" });
-        }
-
-        var result = await _userSessionService.RefreshSessionAsync(refreshToken);
-        if (!result.IsSuccess)
-        {
-            return Problem(
-                detail: result.Error,
-                statusCode: StatusCodes.Status401Unauthorized,
-                title: result.Error
-            );
-        }
-        AddSecureCookie(result.Value.AccessToken);
-
-        AddSecureCookie(result.Value.RefreshToken, "refreshToken", 7);
-        return Ok(result.Value);
-    }
-
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest, CancellationToken cancellationToken)
     {
-        var result = await _authService.LoginAsync(loginRequest, cancellationToken);
+        var sessionContext = CreateSessionContext();
+        var result = await _authService.LoginAsync(loginRequest, sessionContext, cancellationToken);
         if (!result.IsSuccess)
         {
             return Problem(
@@ -69,7 +51,8 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest, CancellationToken cancellationToken)
     {
-        var result = await _authService.RegisterAsync(registerRequest, cancellationToken);
+        var sessionContext = CreateSessionContext();
+        var result = await _authService.RegisterAsync(registerRequest, sessionContext, cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -85,8 +68,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            await _userSessionService.RevokeSessionAsync(refreshToken);
+        }
+        
         Response.Cookies.Delete("jwt_access", new CookieOptions
         {
             HttpOnly = true,
@@ -114,7 +103,8 @@ public class AuthController : ControllerBase
         if (!Guid.TryParse(strId, out Guid id))
             return BadRequest("Некорректный Id пользователя");
 
-        var result =await _authService.ChangePassword(changePasswordRequest,id, token);
+        var sessionContext = CreateSessionContext();
+        var result = await _authService.ChangePassword(changePasswordRequest,id, sessionContext, token);
 
         if(!result.IsSuccess)
             return Problem(
@@ -127,6 +117,16 @@ public class AuthController : ControllerBase
         return Ok(result.Value);
     }
 
+    private SessionContextDto CreateSessionContext()
+    {
+        var clientInfo = _userAgentParser.ClientInfo;
+        return new SessionContextDto()
+        {
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            DeviceType = clientInfo.Device.Family,
+            Os = $"{clientInfo.OS.Family} {clientInfo.OS.Major}".Trim()
+        };
+    }
     private void AddSecureCookie(string token, string name = "jwt_access", int days = 0)
     {
         var expires = days > 0

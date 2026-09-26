@@ -1,3 +1,4 @@
+using System.Buffers.Text;
 using NetWalker.Application.Common.Interfaces.Security;
 using NetWalker.Application.Common.Models;
 using NetWalker.Application.DTOs.Auth;
@@ -16,62 +17,88 @@ public class UserSessionService : IUserSessionService
     private readonly TimeSpan _refreshTokenExpiration = TimeSpan.FromDays(7);
 
     public UserSessionService(IJwtProvider jwtProvider,
-        IUserSessionRepository sessionRepository, 
+        IUserSessionRepository sessionRepository,
         IUserRepository userRepository)
     {
         _jwtProvider = jwtProvider;
         _sessionRepository = sessionRepository;
         _userRepository = userRepository;
     }
-    public async Task<Result<AuthResponse>> CreateSessionAsync(User user, CancellationToken cancellationToken = default)
+
+    public async Task<Result<AuthResponse>> CreateSessionAsync(User user, SessionContextDto sessionContext, CancellationToken cancellationToken = default)
     {
-        var (token, refreshToken) = GenerateTokens(user);
-        var refreshTokenHash = HashToken(refreshToken);
-        await _sessionRepository.AddAsync(new UserSession(user.Id, refreshTokenHash, _refreshTokenExpiration), cancellationToken );
-        return Result<AuthResponse>.Success(new AuthResponse(token, refreshToken));
+        var rawSecret = GenerateRandomSecret();
+        var refreshTokenHash = HashToken(rawSecret);
+        
+        var session = new UserSession(user.Id,
+            refreshTokenHash,
+            sessionContext.DeviceType,
+            sessionContext.Os,
+            sessionContext.IpAddress,
+            _refreshTokenExpiration);
+        
+        await _sessionRepository.AddAsync(session, cancellationToken );
+        var refreshToken = $"{session.Id}.{rawSecret}";
+        var accessToken = _jwtProvider.GenerateToken(user);
+        return Result<AuthResponse>.Success(new AuthResponse(accessToken, refreshToken));
     }
 
     public async Task<Result<AuthResponse>> RefreshSessionAsync(string refreshToken, CancellationToken cancellationToken = default)
     {
-        var incomingHash = HashToken(refreshToken);
-        var session = await _sessionRepository.GetByTokenHashAsync(incomingHash, cancellationToken);
+        var parts = refreshToken.Split(".");
+        if (parts.Length < 2 || !Guid.TryParse(parts[0], out var sessionId))
+        {
+            return Result.Failure<AuthResponse>("Invalid refresh token format");
+        }
+
+        var incomingSecret = parts[1];
+        var incomingHash = HashToken(incomingSecret);
+        
+        
+        var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken);
         if (session is null || !session.IsActive)
         {
-            return  Result<AuthResponse>.Failure("Invalid refresh token.");
+            return  Result<AuthResponse>.Failure("Session not found or revoked");
         }
+
+        if (session.TokenHash != incomingHash)
+        {
+            session.Revoke();
+            await _sessionRepository.UpdateAsync(session, cancellationToken);
+            return  Result<AuthResponse>.Failure("Session not found or revoked");
+        }
+        
         var user  = await _userRepository.GetByIdAsync(session.UserId, cancellationToken);
         if (user is null) return Result<AuthResponse>.Failure("User not found.");
-        await RevokeSessionAsync(refreshToken, cancellationToken);
-        var (newToken, newRefreshToken) = GenerateTokens(user);
-        var refreshTokenHash = HashToken(newRefreshToken);
-        await _sessionRepository.AddAsync(new UserSession(user.Id, refreshTokenHash, _refreshTokenExpiration), cancellationToken);
-        return Result<AuthResponse>.Success(new AuthResponse(newToken, newRefreshToken));
+
+        var newSecret = GenerateRandomSecret();
+        session.TokenHash = HashToken(newSecret);
+        session.ExpiresAt = DateTime.UtcNow.Add(_refreshTokenExpiration);
+        
+        await _sessionRepository.UpdateAsync(session, cancellationToken);
+
+        var newRefreshToken = $"{session.Id}.{newSecret}";
+        var newAccessToken = _jwtProvider.GenerateToken(user);
+        return Result<AuthResponse>.Success(new AuthResponse(newAccessToken, newRefreshToken));
     }
 
     public async Task<Result> RevokeSessionAsync(string refreshToken, CancellationToken cancellationToken = default)
     {
-        var incomingHash = HashToken(refreshToken);
-        var session = await _sessionRepository.GetByTokenHashAsync(incomingHash, cancellationToken);
-        if (session is not null )
+        var parts = refreshToken.Split(".");
+        if (parts.Length == 2 && Guid.TryParse(parts[0], out var sessionId))
         {
-            await _sessionRepository.RemoveAsync(session, cancellationToken);
+            var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken);
+            if (session is not null )
+            {
+                await _sessionRepository.RemoveAsync(session, cancellationToken);
+            }
         }
         return Result.Success();
     }
-    
-    private (string, string) GenerateTokens(User user)
-    {
-        var token = _jwtProvider.GenerateToken(user);
-        var refreshToken = GenerateRefreshToken();
-        return (token, refreshToken);
-    }
-    private string GenerateRefreshToken(int byteSize = 64)
+    private string GenerateRandomSecret(int byteSize = 64)
     {
         var randomBytes = RandomNumberGenerator.GetBytes(byteSize);
-        return Convert.ToBase64String(randomBytes)
-            .Replace("+", "-")
-            .Replace("/", "_")
-            .TrimEnd('=');
+        return Base64Url.EncodeToString(randomBytes);
     }
     private static string HashToken(string token)
     {

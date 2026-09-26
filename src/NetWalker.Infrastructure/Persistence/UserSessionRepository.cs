@@ -32,8 +32,8 @@ public class UserSessionRepository : IUserSessionRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<UserSession?> GetByTokenHashAsync(string tokenHash, CancellationToken cancellationToken = default)
+    public async Task<UserSession?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     { 
-        return await _context.UserSessions.FirstOrDefaultAsync(s => s.Token == tokenHash, cancellationToken);
+        return await _context.UserSessions.FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 }
