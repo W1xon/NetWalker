@@ -13,9 +13,6 @@ public class UserSessionRepository : IUserSessionRepository
     }
     public async Task AddAsync(UserSession session, CancellationToken cancellationToken = default)
     {
-        var oldSession = await _context.UserSessions.FirstOrDefaultAsync(s => s.UserId == session.UserId, cancellationToken);
-        if(oldSession is not null)
-            _context.UserSessions.Remove(oldSession);
         _context.UserSessions.Add(session);
         await _context.SaveChangesAsync(cancellationToken);
     }
