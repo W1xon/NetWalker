@@ -62,10 +62,10 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync(token);
     }
 
-    public void Remove(User user)
+    public async Task Remove(User user)
     {
-        _context.Users.Remove(user);
-        _context.SaveChanges();
+         _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
     }
 
     public async Task AddAsync(User user, CancellationToken token = default)
