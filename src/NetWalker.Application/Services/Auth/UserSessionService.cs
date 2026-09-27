@@ -102,7 +102,8 @@ public class UserSessionService : IUserSessionService
             var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken);
             if (session is not null )
             {
-                await _sessionRepository.RemoveAsync(session, cancellationToken);
+                session.Revoke();
+                await _sessionRepository.UpdateAsync(session, cancellationToken);
             }
         }
         return Result.Success();

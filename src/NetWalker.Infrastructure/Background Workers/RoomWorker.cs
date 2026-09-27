@@ -38,7 +38,7 @@ public class RoomWorker : BackgroundService
                 var roomChatRepository = scope.ServiceProvider.GetRequiredService<IRoomChatRepository>();
                 foreach (var room in removeRooms)
                 {
-                    roomChatRepository.DeleteChat(room.SessionCode, stoppingToken); 
+                    await roomChatRepository.DeleteChat(room.SessionCode, stoppingToken); 
                     await roomRepository.Remove(room.SessionCode);
                 }
             }
