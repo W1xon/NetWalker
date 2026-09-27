@@ -44,29 +44,18 @@ public class UserSessionService : IUserSessionService
 
     public async Task<Result<AuthResponse>> RefreshSessionAsync(string refreshToken, CancellationToken cancellationToken = default)
     {
-        var parts = refreshToken.Split(".");
-        if (parts.Length < 2 || !Guid.TryParse(parts[0], out var sessionId))
-        {
+        if (!IsValidTokenFormat(refreshToken, out var sessionId, out var incomingSecret))
             return Result.Failure<AuthResponse>("Invalid refresh token format");
-        }
-
-        var incomingSecret = parts[1];
-        var incomingHash = HashToken(incomingSecret);
-        
         
         var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken);
         if (session is null || !session.IsActive)
-        {
             return  Result<AuthResponse>.Failure("Session not found or revoked");
-        }
 
+        var incomingHash = HashToken(incomingSecret);
         var validationResult = session.CheckToken(incomingHash);
+        
         if (validationResult == TokenValidationResult.Invalid)
-        {
-            session.Revoke();
-            await _sessionRepository.UpdateAsync(session, cancellationToken);
-            return  Result<AuthResponse>.Failure("Session not found or revoked");
-        }
+            return await RevokeInvalidSession(session);
         
         var user  = await _userRepository.GetByIdAsync(session.UserId, cancellationToken);
         if (user is null) return Result<AuthResponse>.Failure("User not found.");
@@ -75,15 +64,10 @@ public class UserSessionService : IUserSessionService
         var tokenHash = HashToken(newSecret);
 
         if (validationResult == TokenValidationResult.ValidCurrent)
-        {
             session.RotateToken(tokenHash);
-        }
 
         if (validationResult == TokenValidationResult.ValidGracePeriod)
-        {
             session.TokenHash = tokenHash;
-        }
-
         
         session.ExpiresAt = DateTime.UtcNow.Add(_refreshTokenExpiration);
         await _sessionRepository.UpdateAsync(session, cancellationToken);
@@ -107,15 +91,35 @@ public class UserSessionService : IUserSessionService
         }
         return Result.Success();
     }
+    
     private string GenerateRandomSecret(int byteSize = 64)
     {
         var randomBytes = RandomNumberGenerator.GetBytes(byteSize);
         return Base64Url.EncodeToString(randomBytes);
     }
-    private static string HashToken(string token)
+    private string HashToken(string token)
     {
         var bytes = System.Text.Encoding.UTF8.GetBytes(token);
         var hash = SHA256.HashData(bytes);
         return Convert.ToBase64String(hash);
+    }
+
+    private bool IsValidTokenFormat(string token, out Guid sessionId, out string secret)
+    {
+        sessionId = Guid.Empty;
+        secret = string.Empty;
+
+        var parts = token.Split('.');
+        if (parts.Length != 2 || !Guid.TryParse(parts[0], out sessionId))
+            return false;
+
+        secret = parts[1];
+        return true;
+    }
+    private async Task<Result<AuthResponse>> RevokeInvalidSession(UserSession session)
+    {
+        session.Revoke();
+        await _sessionRepository.UpdateAsync(session);
+        return Result<AuthResponse>.Failure("Session not found or revoked");
     }
 }
