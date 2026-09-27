@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using NetWalker.Domain;
-using NetWalker.Domain.Entities;
 using NetWalker.Domain.Rooms;
 using NetWalker.Domain.Users;
 

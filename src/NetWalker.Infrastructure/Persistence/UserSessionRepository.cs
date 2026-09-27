@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NetWalker.Application.Common.Interfaces.Persistence;
-using NetWalker.Domain.Entities;
+using NetWalker.Domain.Users;
 
 namespace NetWalker.Infrastructure.Persistence;
 

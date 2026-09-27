@@ -1,4 +1,4 @@
-namespace NetWalker.Domain.Entities;
+namespace NetWalker.Domain.Users;
 
 public enum TokenValidationResult
 {

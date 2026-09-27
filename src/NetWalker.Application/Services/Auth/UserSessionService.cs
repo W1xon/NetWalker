@@ -2,7 +2,6 @@ using System.Buffers.Text;
 using NetWalker.Application.Common.Interfaces.Security;
 using NetWalker.Application.Common.Models;
 using NetWalker.Application.DTOs.Auth;
-using NetWalker.Domain.Entities;
 using NetWalker.Domain.Users;
 using System.Security.Cryptography;
 using NetWalker.Application.Common.Interfaces.Persistence;

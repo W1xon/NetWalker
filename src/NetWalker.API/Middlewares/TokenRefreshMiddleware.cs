@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using NetWalker.Application.Common.Interfaces.Security;
 
 namespace NetWalker.API.Middlewares;
@@ -13,10 +14,15 @@ public class TokenRefreshMiddleware
 
     public async Task InvokeAsync(HttpContext context, IUserSessionService userSessionService)
     {
-        var hasAccess = context.Request.Cookies.ContainsKey("jwt_access");
+        var isAccessValid = false;
+        if(context.Request.Cookies.TryGetValue("jwt_access", out var accessToken) 
+           && !string.IsNullOrWhiteSpace(accessToken))
+        {
+            isAccessValid = IsTokenValid(accessToken);
+        }
         var hasRefresh = context.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
 
-        if (!hasAccess && hasRefresh && !string.IsNullOrWhiteSpace(refreshToken))
+        if (!isAccessValid && hasRefresh && !string.IsNullOrWhiteSpace(refreshToken))
         {
             var result = await userSessionService.RefreshSessionAsync(refreshToken);
             if (result.IsSuccess)
@@ -44,5 +50,22 @@ public class TokenRefreshMiddleware
         }
 
         await _next(context);
+    }
+    
+    private bool IsTokenValid(string token)
+    {
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            if (!handler.CanReadToken(token))
+                return false;
+            
+            var jwtToken = handler.ReadJwtToken(token);
+            return jwtToken.ValidTo > DateTime.UtcNow;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
