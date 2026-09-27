@@ -14,7 +14,7 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
     
-    public async Task<Result<ProfileResponse>> GetProfileByNameAsync(Guid id, CancellationToken token = default)
+    public async Task<Result<ProfileResponse>> GetProfileByIdAsync(Guid id, CancellationToken token = default)
     {
         var user = await _userRepository.GetByIdWithStatsAsync(id, token);
         if (user is null)
@@ -25,7 +25,7 @@ public class UserService : IUserService
         return Result<ProfileResponse>.Success(profile);
     }
     
-    public async Task<Result<PlayerStatsResponse>> GetPlayerStatsByNameAsync(Guid id, CancellationToken token = default)
+    public async Task<Result<PlayerStatsResponse>> GetPlayerStatsByIdAsync(Guid id, CancellationToken token = default)
     {
         var user = await _userRepository.GetByIdWithStatsAsync(id, token);
         if (user is null)

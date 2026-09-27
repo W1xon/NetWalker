@@ -23,7 +23,7 @@ public class UserController : ControllerBase
         var strId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!Guid.TryParse(strId, out Guid id))
             return BadRequest("Некорректный Id пользователя");
-        var result = await _userService.GetProfileByNameAsync(id, token);
+        var result = await _userService.GetProfileByIdAsync(id, token);
         if (!result.IsSuccess)
             return NotFound(result.Error);
         

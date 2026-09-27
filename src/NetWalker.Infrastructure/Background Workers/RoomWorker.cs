@@ -23,6 +23,7 @@ public class RoomWorker : BackgroundService
             {
                 
                 using var scope = _scopeFactory.CreateScope();
+                
                 var roomService = scope.ServiceProvider.GetRequiredService<IRoomService>();
                 var now = DateTime.UtcNow;
                 var rooms = await roomService.GetActiveRoomsAsync(stoppingToken);
@@ -30,10 +31,14 @@ public class RoomWorker : BackgroundService
                 var removeRooms = activeRoomsList.Where(r =>
                     r.Status == RoomStatus.Finished || r.Status == RoomStatus.Abandoned ||
                     (now - r.CreatedTime) > TimeSpan.FromDays(1)).ToList();
+                
+                
                 Console.WriteLine($"Комнат для удаления: {removeRooms.Count()}");
                 var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
+                var roomChatRepository = scope.ServiceProvider.GetRequiredService<IRoomChatRepository>();
                 foreach (var room in removeRooms)
                 {
+                    roomChatRepository.DeleteChat(room.SessionCode, stoppingToken); 
                     await roomRepository.Remove(room.SessionCode);
                 }
             }

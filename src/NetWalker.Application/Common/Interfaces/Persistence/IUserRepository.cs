@@ -8,6 +8,7 @@ public interface IUserRepository
 {
     Task<User?> GetByIdAsync(Guid id, CancellationToken token = default);
     Task<User?> GetByNickAsync(string nick, CancellationToken token = default);
+    Task<List<User>> GetByIdsAsync(IList<Guid> ids, CancellationToken token = default);
     
     Task<User?> GetByIdWithStatsAsync(Guid id, CancellationToken token = default);
     Task<User?> GetByNickWithStatsAsync(string nick, CancellationToken token = default);

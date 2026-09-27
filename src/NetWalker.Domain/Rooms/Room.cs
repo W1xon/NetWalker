@@ -81,10 +81,7 @@ public class Room
         if (!_playerIds.Contains(playerId)) return false;
 
         if (playerId == HostId)
-        {
             Close();
-            return true;
-        }
 
         _playerIds.Remove(playerId);
         TouchHeartbeat();

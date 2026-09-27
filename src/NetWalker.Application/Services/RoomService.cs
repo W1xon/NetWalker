@@ -62,10 +62,10 @@ public class RoomService : IRoomService
             return Result<RoomDetailsResponse>.Failure("Такой комнаты не существует");
 
         var players = new List<RoomPlayerDto>();
-        foreach (var id in room.PlayerIds)
+        var users = await _userRepository.GetByIdsAsync(room.PlayerIds.ToList(), token);
+        foreach (var user in users)
         {
-            var user = await _userRepository.GetByIdAsync(id, token);
-            players.Add(new RoomPlayerDto(id, user.Nick, id == room.HostId));
+            players.Add(new RoomPlayerDto(user.Id, user.Nick, user.Id == room.HostId));
         }
         
         return Result<RoomDetailsResponse>.Success(new RoomDetailsResponse(sessionCode,

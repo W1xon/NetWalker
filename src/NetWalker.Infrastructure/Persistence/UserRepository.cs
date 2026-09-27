@@ -29,6 +29,17 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Id == id, token);
     }
 
+    public async Task<List<User>> GetByIdsAsync(IList<Guid> ids, CancellationToken token = default)
+    {
+        if (ids == null || !ids.Any())
+        {
+            return new List<User>();
+        }
+        return await _context.Users.AsNoTracking()
+            .Where(u => ids.Contains(u.Id))
+            .ToListAsync(token);
+    }
+
     public async Task<User?> GetByNickWithStatsAsync(string name, CancellationToken token = default)
     {
         return await _context.Users
@@ -53,7 +64,8 @@ public class UserRepository : IUserRepository
 
     public void Remove(User user)
     {
-        throw new NotImplementedException();
+        _context.Users.Remove(user);
+        _context.SaveChanges();
     }
 
     public async Task AddAsync(User user, CancellationToken token = default)
