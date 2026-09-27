@@ -61,7 +61,8 @@ public class UserSessionService : IUserSessionService
             return  Result<AuthResponse>.Failure("Session not found or revoked");
         }
 
-        if (session.TokenHash != incomingHash)
+        var validationResult = session.CheckToken(incomingHash);
+        if (validationResult == TokenValidationResult.Invalid)
         {
             session.Revoke();
             await _sessionRepository.UpdateAsync(session, cancellationToken);
@@ -72,9 +73,20 @@ public class UserSessionService : IUserSessionService
         if (user is null) return Result<AuthResponse>.Failure("User not found.");
 
         var newSecret = GenerateRandomSecret();
-        session.TokenHash = HashToken(newSecret);
-        session.ExpiresAt = DateTime.UtcNow.Add(_refreshTokenExpiration);
+        var tokenHash = HashToken(newSecret);
+
+        if (validationResult == TokenValidationResult.ValidCurrent)
+        {
+            session.RotateToken(tokenHash);
+        }
+
+        if (validationResult == TokenValidationResult.ValidGracePeriod)
+        {
+            session.TokenHash = tokenHash;
+        }
+
         
+        session.ExpiresAt = DateTime.UtcNow.Add(_refreshTokenExpiration);
         await _sessionRepository.UpdateAsync(session, cancellationToken);
 
         var newRefreshToken = $"{session.Id}.{newSecret}";

@@ -24,7 +24,7 @@ public class RoomWorker : BackgroundService
                 
                 using var scope = _scopeFactory.CreateScope();
                 var roomService = scope.ServiceProvider.GetRequiredService<IRoomService>();
-                var now = DateTime.Now;
+                var now = DateTime.UtcNow;
                 var rooms = await roomService.GetActiveRoomsAsync(stoppingToken);
                 var activeRoomsList = rooms.ToList();
                 var removeRooms = activeRoomsList.Where(r =>

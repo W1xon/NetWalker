@@ -17,11 +17,12 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
 
         builder.Property(s => s.IpAddress)
             .IsRequired();
+        
         builder.Property(s => s.DeviceType)
             .IsRequired();
+        
         builder.Property(s => s.Os)
             .IsRequired();
-        
         
         builder.Property(s => s.TokenHash)
             .IsRequired()
@@ -29,6 +30,11 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
 
         builder.HasIndex(s => s.TokenHash)
             .IsUnique();
+
+        builder.Property(s => s.PreviousTokenHash)
+            .HasMaxLength(256);
+
+        builder.Property(s => s.PreviousTokenExpiresAt);
 
         builder.Property(s => s.CreatedAt)
             .IsRequired();
